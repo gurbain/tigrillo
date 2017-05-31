@@ -1,0 +1,15 @@
+# build folder
+build/*
+
+# data folders
+results/*
+
+# deprecated folders
+other/*
+
+# All compiled python scripts
+*.pyc
+
+# Other
+*.user
+*.directory

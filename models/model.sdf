@@ -1,0 +1,547 @@
+<?xml version='1.0'?>
+<sdf version="1.4">
+	<world name="default">
+	<model name="tigrillo">
+		<static>false</static>
+		
+		<!-- Create the solid for body-->
+		<link name="body">
+			
+			<pose>0 0 0.8952 0 0 0 </pose>
+			
+			<!-- All mass and inertial features -->
+			<inertial>
+				<mass>1</mass>
+				<inertia>
+					<ixx>0.5417</ixx>
+					<ixy>0.0</ixy>
+					<ixz>0.0</ixz>
+					<iyy>0.2083</iyy>
+					<iyz>0.0</iyz>
+					<izz>0.7083</izz>
+				</inertia>
+			</inertial>
+			
+			<!-- Geometric features for collision of main body -->
+			<collision name="body_col">
+				<geometry>
+					<box>
+						<size>1.5 2.5 0.5</size>
+					</box>
+				</geometry>
+			</collision>
+			
+			<!-- Geometric and texture features for visuals of main body-->
+			<visual name="body_vis">
+				<geometry>
+					<box>
+						<size>1.5 2.5 0.5</size>
+					</box>
+				</geometry>
+			</visual>
+
+		</link>
+		
+		<!-- Solid for the right humerus -->
+		<link name="right_humerus">
+			
+			<pose>0.8 1.0979 0.578 0.4363 0 0</pose>
+			
+			<inertial>
+				<mass>0.2</mass>
+				<inertia>
+					<ixx>0.0082</ixx>
+					<ixy>0.0</ixy>
+					<ixz>0.0</ixz>
+					<iyy>0.0082</iyy>
+					<iyz>0.0</iyz>
+					<izz>0.00009</izz>
+				</inertia>
+			</inertial>
+			
+			<collision name="col">
+				<geometry>
+					<cylinder radius="0.03" length="0.7" />
+				</geometry>
+			</collision>
+			
+			<visual name="vis">
+				<geometry>
+					<cylinder radius="0.03" length="0.7" />
+				</geometry>
+			</visual>
+		</link>
+		
+		<!-- Solid for the right radius -->
+		<link name="right_radius">
+			
+			<pose>0.8 1.3098 0.2217 1.022 0 0</pose>
+			
+			<inertial>
+				<mass>0.2</mass>
+				<inertia>
+					<ixx>0.0121</ixx>
+					<ixy>0.0</ixy>
+					<ixz>0.0</ixz>
+					<iyy>0.0121</iyy>
+					<iyz>0.0</iyz>
+					<izz>0.00009</izz>
+				</inertia>
+			</inertial>
+						
+			<collision name="col_rad">
+				<geometry>
+					<cylinder radius="0.03" length="0.85" />
+				</geometry>
+				<surface>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>1</mu2>
+						</ode>
+						<bullet>
+							<friction>1</friction>
+							<friction2>1</friction2>
+						</bullet>
+					</friction>
+				</surface>
+			</collision>
+			
+			<visual name="vis_rad">
+				<geometry>
+					<cylinder radius="0.03" length="0.85" />
+				</geometry>
+			</visual>
+			
+			<collision name="col_foot">
+				<pose>0 0.0261 -0.4676 0.5488 0 0</pose>
+				<geometry>
+					<cylinder radius="0.03" length="0.1" />
+				</geometry>
+				<surface>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>1</mu2>
+						</ode>
+						<bullet>
+							<friction>1</friction>
+							<friction2>1</friction2>
+						</bullet>
+					</friction>
+				</surface>
+			</collision>
+			
+			<visual name="vis_foot">
+				<pose>0 0.0261 -0.4676 0.5488 0 0</pose>
+				<geometry>
+					<cylinder radius="0.03" length="0.1" />
+				</geometry>
+			</visual>
+		</link>
+		
+		<!-- Solid for the left humerus -->
+		<link name="left_humerus">
+			
+			<pose>-0.8 1.0979 0.578 0.4363 0 0</pose>
+			
+			<inertial>
+				<mass>0.2</mass>
+				<inertia>
+					<ixx>0.0082</ixx>
+					<ixy>0.0</ixy>
+					<ixz>0.0</ixz>
+					<iyy>0.0082</iyy>
+					<iyz>0.0</iyz>
+					<izz>0.00009</izz>
+				</inertia>
+			</inertial>
+			
+			<collision name="col">
+				<geometry>
+					<cylinder radius="0.03" length="0.7" />
+				</geometry>
+			</collision>
+			
+			<visual name="vis">
+				<geometry>
+					<cylinder radius="0.03" length="0.7" />
+				</geometry>
+			</visual>
+		</link>
+		
+		<!-- Solid for the left radius -->
+		<link name="left_radius">
+			
+			<pose>-0.8 1.3098 0.2217 1.022 0 0</pose>
+			
+			<inertial>
+				<mass>0.2</mass>
+				<inertia>
+					<ixx>0.0121</ixx>
+					<ixy>0.0</ixy>
+					<ixz>0.0</ixz>
+					<iyy>0.0121</iyy>
+					<iyz>0.0</iyz>
+					<izz>0.00009</izz>
+				</inertia>
+			</inertial>
+						
+			<collision name="col_rad">
+				<geometry>
+					<cylinder radius="0.03" length="0.85" />
+				</geometry>
+				<surface>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>1</mu2>
+						</ode>
+						<bullet>
+							<friction>1</friction>
+							<friction2>1</friction2>
+						</bullet>
+					</friction>
+				</surface>
+			</collision>
+			
+			<visual name="vis_rad">
+				<geometry>
+					<cylinder radius="0.03" length="0.85" />
+				</geometry>
+			</visual>
+			
+			<collision name="col_foot">
+				<pose>0 0.0261 -0.4676 0.5488 0 0</pose>
+				<geometry>
+					<cylinder radius="0.03" length="0.1" />
+				</geometry>
+				<surface>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>1</mu2>
+						</ode>
+						<bullet>
+							<friction>1</friction>
+							<friction2>1</friction2>
+						</bullet>
+					</friction>
+				</surface>
+			</collision>
+			
+			<visual name="vis_foot">
+				<pose>0 0.0261 -0.4676 0.5488 0 0</pose>
+				<geometry>
+					<cylinder radius="0.03" length="0.1" />
+				</geometry>
+			</visual>
+		</link>
+		
+		<!-- Solid for the right femur -->
+		<link name="right_femur">
+			
+			<pose>0.8 -0.8021 0.578 0.4363 0 0</pose>
+			
+			<inertial>
+				<mass>0.2</mass>
+				<inertia>
+					<ixx>0.0082</ixx>
+					<ixy>0.0</ixy>
+					<ixz>0.0</ixz>
+					<iyy>0.0082</iyy>
+					<iyz>0.0</iyz>
+					<izz>0.00009</izz>
+				</inertia>
+			</inertial>
+			
+			<collision name="col">
+				<geometry>
+					<cylinder radius="0.03" length="0.7" />
+				</geometry>
+			</collision>
+			
+			<visual name="vis">
+				<geometry>
+					<cylinder radius="0.03" length="0.7" />
+				</geometry>
+			</visual>
+		</link>
+		
+		<!-- Solid for the right tibia -->
+		<link name="right_tibia">
+			
+			<pose>0.8 -0.5902 0.2217 1.022 0 0</pose>
+			
+			<inertial>
+				<mass>0.2</mass>
+				<inertia>
+					<ixx>0.0121</ixx>
+					<ixy>0.0</ixy>
+					<ixz>0.0</ixz>
+					<iyy>0.0121</iyy>
+					<iyz>0.0</iyz>
+					<izz>0.00009</izz>
+				</inertia>
+			</inertial>
+						
+			<collision name="col_tib">
+				<geometry>
+					<cylinder radius="0.03" length="0.85" />
+				</geometry>
+				<surface>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>1</mu2>
+						</ode>
+						<bullet>
+							<friction>1</friction>
+							<friction2>1</friction2>
+						</bullet>
+					</friction>
+				</surface>
+			</collision>
+			
+			<visual name="vis_tib">
+				<geometry>
+					<cylinder radius="0.03" length="0.85" />
+				</geometry>
+			</visual>
+			
+			<collision name="col_foot">
+				<pose>0 0.0261 -0.4676 0.5488 0 0</pose>
+				<geometry>
+					<cylinder radius="0.03" length="0.1" />
+				</geometry>
+				<surface>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>1</mu2>
+						</ode>
+						<bullet>
+							<friction>1</friction>
+							<friction2>1</friction2>
+						</bullet>
+					</friction>
+				</surface>
+			</collision>
+			
+			<visual name="vis_foot">
+				<pose>0 0.0261 -0.4676 0.5488 0 0</pose>
+				<geometry>
+					<cylinder radius="0.03" length="0.1" />
+				</geometry>
+			</visual>
+		</link>		
+		
+		<!-- Solid for the left femur -->
+		<link name="left_femur">
+			
+			<pose>-0.8 -0.8021 0.578 0.4363 0 0</pose>
+			
+			<inertial>
+				<mass>0.2</mass>
+				<inertia>
+					<ixx>0.0082</ixx>
+					<ixy>0.0</ixy>
+					<ixz>0.0</ixz>
+					<iyy>0.0082</iyy>
+					<iyz>0.0</iyz>
+					<izz>0.00009</izz>
+				</inertia>
+			</inertial>
+			
+			<collision name="col">
+				<geometry>
+					<cylinder radius="0.03" length="0.7" />
+				</geometry>
+			</collision>
+			
+			<visual name="vis">
+				<geometry>
+					<cylinder radius="0.03" length="0.7" />
+				</geometry>
+			</visual>
+		</link>
+		
+		<!-- Solid for the left tibia -->
+		<link name="left_tibia">
+			
+			<pose>-0.8 -0.5902 0.2217 1.022 0 0</pose>
+			
+			<inertial>
+				<mass>0.2</mass>
+				<inertia>
+					<ixx>0.0121</ixx>
+					<ixy>0.0</ixy>
+					<ixz>0.0</ixz>
+					<iyy>0.0121</iyy>
+					<iyz>0.0</iyz>
+					<izz>0.00009</izz>
+				</inertia>
+			</inertial>
+						
+			<collision name="col_tib">
+				<geometry>
+					<cylinder radius="0.03" length="0.85" />
+				</geometry>
+				<surface>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>1</mu2>
+						</ode>
+						<bullet>
+							<friction>1</friction>
+							<friction2>1</friction2>
+						</bullet>
+					</friction>
+				</surface>
+			</collision>
+			
+			<visual name="vis_tib">
+				<geometry>
+					<cylinder radius="0.03" length="0.85" />
+				</geometry>
+			</visual>
+			
+			<collision name="col_foot">
+				<pose>0 0.0261 -0.4676 0.5488 0 0</pose>
+				<geometry>
+					<cylinder radius="0.03" length="0.1" />
+				</geometry>
+				<surface>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>1</mu2>
+						</ode>
+						<bullet>
+							<friction>1</friction>
+							<friction2>1</friction2>
+						</bullet>
+					</friction>
+				</surface>
+			</collision>
+			
+			<visual name="vis_foot">
+				<pose>0 0.0261 -0.4676 0.5488 0 0</pose>
+				<geometry>
+					<cylinder radius="0.03" length="0.1" />
+				</geometry>
+			</visual>
+		</link>
+
+		<!-- rotation joint for the right shoulder -->
+		<joint name="right_shoulder" type="revolute">
+			<parent>body</parent>
+			<child>right_humerus</child>
+			<pose>0 0 0.35 0 0 0</pose>
+			<axis>
+				<xyz>1 0 0</xyz>
+				<limit lower="-0.17453" upper="0.17453" />
+			</axis>
+			
+		</joint>
+		
+		<!-- rotation joint for the left shoulder -->
+		<joint name="left_shoulder" type="revolute">
+			<parent>body</parent>
+			<child>left_humerus</child>
+			<pose>0 0 0.35 0 0 0</pose>
+			<axis>
+				<xyz>-1 0 0</xyz>
+				<limit lower="-0.17453" upper="0.17453" />
+			</axis>
+		</joint>
+		
+		<!-- rotation joint for the right hip -->
+		<joint name="right_hip" type="revolute">
+			<parent>body</parent>
+			<child>right_femur</child>
+			<pose>0 0 0.35 0 0 0</pose>
+			<axis>
+				<xyz>1 0 0</xyz>
+				<limit lower="-0.17453" upper="0.17453" />
+			</axis>
+		</joint>
+		
+		<!-- rotation joint for the left hip -->
+		<joint name="left_hip" type="revolute">
+			<parent>body</parent>
+			<child>left_femur</child>
+			<pose>0 0 0.35 0 0 0</pose>
+			<axis>
+				<xyz>-1 0 0</xyz>
+				<limit lower="-0.17453" upper="0.17453" />
+			</axis>
+		</joint>
+		
+		<!-- rotation joint for the right elbow -->
+		<joint name="right_elbow" type="revolute">
+			<parent>right_humerus</parent>
+			<child>right_radius</child>
+			<pose>0 0 0.1 0 0 0</pose>
+			<axis>
+				<dynamics>
+					<damping>1</damping>
+					<spring_stiffness>200</spring_stiffness>
+				</dynamics>
+				<xyz>1 0 0</xyz>
+				<limit lower="-0.17453" upper="0.17453" />
+			</axis>
+		</joint>
+		
+		<!-- rotation joint for the left elbow -->
+		<joint name="left_elbow" type="revolute">
+			<parent>left_humerus</parent>
+			<child>left_radius</child>
+			<pose>0 0 0.1 0 0 0</pose>
+			<axis>
+				<dynamics>
+					<damping>1</damping>
+					<spring_stiffness>200</spring_stiffness>
+				</dynamics>
+				<xyz>-1 0 0</xyz>
+				<limit lower="-0.17453" upper="0.17453" />
+			</axis>
+		</joint>
+		
+		<!-- rotation joint for the right knee -->
+		<joint name="right_knee" type="revolute">
+			<parent>right_femur</parent>
+			<child>right_tibia</child>
+			<pose>0 0 0.1 0 0 0</pose>
+			<axis>
+				<dynamics>
+					<damping>1</damping>
+					<spring_stiffness>100</spring_stiffness>
+				</dynamics>
+				<xyz>1 0 0</xyz>
+				<limit lower="-0.17453" upper="0.17453" />
+			</axis>
+		</joint>
+		
+		<!-- rotation joint for the left knee -->
+		<joint name="left_knee" type="revolute">
+			<parent>left_femur</parent>
+			<child>left_tibia</child>
+			<pose>0 0 0.1 0 0 0</pose>
+			<dynamics damping="1" friction="100"/>
+			<axis>
+				<dynamics>
+					<damping>1</damping>
+					<spring_stiffness>100</spring_stiffness>
+				</dynamics>
+				<xyz>-1 0 0</xyz>
+				<limit lower="-0.17453" upper="0.17453" />
+			</axis>
+		</joint>
+
+	<!-- Attach the plugin to this model -->
+	<plugin name="tigrillo_control" filename="build/libtigrillo_plugin.so"/>
+    </model>
+    </world>
+</sdf>
