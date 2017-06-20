@@ -1,8 +1,13 @@
 # build folder
 build/*
 
+# Useless data
+data/logs/*
+data/results/*
+data/meshes/*
+
 # deprecated folders
-test/*
+tests/*
 
 # All compiled python scripts
 *.pyc

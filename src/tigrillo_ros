@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Eventual environment variable to load
+if pgrep -x "roscore" > /dev/null
+then
+    echo "[BASH Tigrillo]  ROSCORE is already running!"
+else
+	echo "[BASH Tigrillo]  Starting ROSCORE!"
+    roscore &
+fi
+
+N_CORES=1
+
+# Run the software with eventual parameters overload
+mpirun -np $N_CORES python3 main.py -c ../data/configs/default_ros.conf "$@"
