@@ -7,9 +7,12 @@ git clone http://github.com/Gabs48/tigrillo/
 ```
 - Install dependencies:
 ```
-sud
+# Bullet3
+git clone https://github.com/bulletphysics/bullet3
+cd bullet3 && mkdir -p build && cd build
+cmake -DBUILD_PYBULLET=ON -DBUILD_PYBULLET_NUMPY=OFF -DUSE_DOUBLE_PRECISION=ON -DCMAKE_BUILD_TYPE=Release .. && make -j4 && make install
 ```
-- Compile C++:
+- Compile C++ code:
 ```
 mkdir -p build && cd build && cmake .. && make
 ```

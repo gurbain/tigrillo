@@ -1,11 +1,8 @@
 # build folder
 build/*
 
-# data folders
-results/*
-
 # deprecated folders
-other/*
+test/*
 
 # All compiled python scripts
 *.pyc
