@@ -12,8 +12,11 @@ import rospy as ros
 import subprocess
 import time
 
+from utils import *
+
 from rosgraph_msgs.msg import Clock
 from gazebo_msgs.msg import ModelStates
+from std_msgs.msg import Float32MultiArray, MultiArrayLayout
 
 __author__ = "Gabriel Urbain" 
 __copyright__ = "Copyright 2017, Human Brain Projet, SP10"
@@ -29,6 +32,9 @@ __date__ = "June 14th, 2017"
 class Physics():
 
 	def __init__(self, config):
+
+		# Configure the log file
+		self.log = logging.getLogger('Physics')
 
 		self.sim_pid = None
 		self.sim_status = None
@@ -198,42 +204,66 @@ class Gazebo(Physics):
 
 	def __init__(self, config):
 
-		super(Physics, self).__init__()
+		super(Gazebo, self).__init__(config)
+
+		# Configure the log file
+		self.log = logging.getLogger('Gazebo')
 
 		self.sim_ps = None
 		self.sim_ps_name = "rosrun"
 		self.sim_package = "gazebo_ros"
-		self.sim_node = "gzserver"
-		self.sim_args = "tigrillo.world"
+		if config["Physics"]["rendering"] == "True":
+			self.log.info("Using gazebo with rendering")
+			self.sim_node = "gazebo"
+		else:
+			self.sim_node = "gzserver"
+		self.sim_args = config["Physics"]["model"]
 
 		self.ros_pid = None
 		self.ros_status = None
 		self.ros_ps = None
 		self.ros_ps_name = "roscore"
 
+		self.sub_clock = None
+		self.sub_state = None
+		self.pub_legs = None
+
 	def start_sim(self):
 
-		self.get_sim_status()
-		if self.sim_status == psutil.STATUS_RUNNING \
-			or self.ros_status == psutil.STATUS_SLEEPING:
-				print("Simulation is already started")
-				return
+		try:
+			self.sim_duration = 0
+			self.get_sim_status()
+			if self.sim_status == psutil.STATUS_RUNNING \
+				or self.ros_status == psutil.STATUS_SLEEPING:
+					print("Simulation is already started")
+					return
 
-		self.sim_ps = subprocess.Popen([self.sim_ps_name, self.sim_package, \
-			self.sim_node, self.sim_args, " > /dev/null 2>&1"], shell=False)
+			self.log.info("Starting GAZEBO ROS node")
+			proc = [self.sim_ps_name, self.sim_package, self.sim_node, \
+				self.sim_args]
+			logpipe = LogPipe("Gazebo")
+			self.sim_ps = subprocess.Popen(proc, stdout=logpipe, stderr=logpipe, shell=False)
+			logpipe.close()
 
-		ros.init_node('physics')
-		self.sub_clock = ros.Subscriber("/clock", Clock, \
-			callback=self.__reg_sim_duration, queue_size=1)
-		self.sub_state = ros.Subscriber("/gazebo/model_states", ModelStates, \
-			callback=self.__reg_sim_states, queue_size=1)
+			self.log.info("Starting Gazebo with params: " + str(proc))
+			self.log.info("Initializing sensors and actuators subscribers and publishers")
+			ros.init_node('physics', anonymous=True)
+			self.sub_clock = ros.Subscriber("/clock", Clock, \
+				callback=self.__reg_sim_duration, queue_size=1)
+			self.sub_state = ros.Subscriber("/gazebo/model_states", ModelStates, \
+				callback=self.__reg_sim_states, queue_size=1)
+			self.pub_legs = ros.Publisher('/tigrillo/legs_cmd', Float32MultiArray, queue_size=1)
 
-		return
+		except KeyboardInterrupt:
+			self.log.error("Simulation aborted by user before physics can be started correctly")
+			self.kill_sim()
+			return
 
 	def stop_sim(self):
 
 		try:
 			if self.sim_ps != None:
+				self.log.warning("Stopping GAZEBO ROS node")
 				self.sim_ps.terminate()
 		except subprocess.SubprocessError as e:
 			print("Subprocess error" + str(e))
@@ -253,8 +283,11 @@ class Gazebo(Physics):
 
 	def kill_sim(self):
 
-		p = psutil.Process(self.sim_pid)
-		p.kill()
+		self.log.warning("Killing GAZEBO ROS node")
+		for proc in psutil.process_iter():
+			if proc.name() == self.sim_ps_name or proc.name() == "gzserver" \
+				or proc.name() == "gzclient":
+					proc.kill()
 
 	def get_sim_status(self):
 
@@ -266,6 +299,16 @@ class Gazebo(Physics):
 				self.sim_pid = proc.pid
 
 		return self.sim_status
+
+	def is_sim_started(self):
+
+		return (self.sim_duration > 0)
+
+	def set_sim_cmd(self, cmd):
+
+		self.pub_legs.publish(Float32MultiArray( \
+			layout=MultiArrayLayout([], 1), data=cmd))
+		return
 
 	def start_ros(self):
 
@@ -323,7 +366,6 @@ class Gazebo(Physics):
 		index = -1
 		for i, name in enumerate(states.name):
 			if name == "tigrillo":
-				print("here")
 				index = i
 
 		if index != -1:

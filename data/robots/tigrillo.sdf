@@ -104,8 +104,8 @@
           </material>
         </visual>
       </link>
-      <link name="FLM">
-        <pose>-0.52 0.8 1.7469999999999999 0 0 0</pose>
+      <link name="BRM">
+        <pose>0.27 -0.7 1.7469999999999999 0 0 0</pose>
         <inertial>
           <mass>0.067</mass>
           <inertia>
@@ -117,14 +117,14 @@
             <izz>0.0014471999999999998</izz>
           </inertia>
         </inertial>
-        <collision name="FLM_col">
+        <collision name="BRM_col">
           <geometry>
             <box>
               <size>0.36 0.36 0.506</size>
             </box>
           </geometry>
         </collision>
-        <visual name="FLM_vis">
+        <visual name="BRM_vis">
           <geometry>
             <box>
               <size>0.36 0.36 0.506</size>
@@ -138,8 +138,8 @@
           </material>
         </visual>
       </link>
-      <link name="FLU">
-        <pose>-0.745 0.8 1.67 0.4363323129985824 0 0</pose>
+      <link name="BRU">
+        <pose>0.495 -0.7 1.67 0.0 0 0</pose>
         <inertial>
           <pose>0 0 -0.35 0 0 0</pose>
           <mass>0.0035185837720205686</mass>
@@ -152,13 +152,13 @@
             <izz>2.814867017616455e-06</izz>
           </inertia>
         </inertial>
-        <collision name="FLU_col">
+        <collision name="BRU_col">
           <pose>0 0 -0.35 0 0 0</pose>
           <geometry>
             <cylinder length="0.7" radius="0.04"/>
           </geometry>
         </collision>
-        <visual name="FLU_vis">
+        <visual name="BRU_vis">
           <pose>0 0 -0.35 0 0 0</pose>
           <geometry>
             <cylinder length="0.7" radius="0.04"/>
@@ -171,8 +171,8 @@
           </material>
         </visual>
       </link>
-      <link name="FLD">
-        <pose>-0.745 1.0958327832184898 1.0355845490743452 1.0220178564557332 0 0</pose>
+      <link name="BRD">
+        <pose>0.495 -0.7 0.97 0.5856855434571508 0 0</pose>
         <inertial>
           <pose>0 0 0.07500000000000001 0 0 0</pose>
           <mass>0.004272566008882119</mass>
@@ -185,13 +185,21 @@
             <izz>3.4180528071056957e-06</izz>
           </inertia>
         </inertial>
-        <collision name="FLD_col">
+        <collision name="BRD_col">
           <pose>0 0 0.07500000000000001 0 0 0</pose>
           <geometry>
             <cylinder length="0.85" radius="0.04"/>
           </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1.0</mu>
+                <mu2>1.0</mu2>
+              </ode>
+            </friction>
+          </surface>
         </collision>
-        <visual name="FLD_vis">
+        <visual name="BRD_vis">
           <pose>0 0 0.07500000000000001 0 0 0</pose>
           <geometry>
             <cylinder length="0.85" radius="0.04"/>
@@ -290,6 +298,14 @@
           <geometry>
             <cylinder length="0.85" radius="0.04"/>
           </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1.0</mu>
+                <mu2>1.0</mu2>
+              </ode>
+            </friction>
+          </surface>
         </collision>
         <visual name="BLD_vis">
           <pose>0 0 0.07500000000000001 0 0 0</pose>
@@ -390,6 +406,14 @@
           <geometry>
             <cylinder length="0.85" radius="0.04"/>
           </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1.0</mu>
+                <mu2>1.0</mu2>
+              </ode>
+            </friction>
+          </surface>
         </collision>
         <visual name="FRD_vis">
           <pose>0 0 0.07500000000000001 0 0 0</pose>
@@ -404,8 +428,8 @@
           </material>
         </visual>
       </link>
-      <link name="BRM">
-        <pose>0.27 -0.7 1.7469999999999999 0 0 0</pose>
+      <link name="FLM">
+        <pose>-0.52 0.8 1.7469999999999999 0 0 0</pose>
         <inertial>
           <mass>0.067</mass>
           <inertia>
@@ -417,14 +441,14 @@
             <izz>0.0014471999999999998</izz>
           </inertia>
         </inertial>
-        <collision name="BRM_col">
+        <collision name="FLM_col">
           <geometry>
             <box>
               <size>0.36 0.36 0.506</size>
             </box>
           </geometry>
         </collision>
-        <visual name="BRM_vis">
+        <visual name="FLM_vis">
           <geometry>
             <box>
               <size>0.36 0.36 0.506</size>
@@ -438,8 +462,8 @@
           </material>
         </visual>
       </link>
-      <link name="BRU">
-        <pose>0.495 -0.7 1.67 0.0 0 0</pose>
+      <link name="FLU">
+        <pose>-0.745 0.8 1.67 0.4363323129985824 0 0</pose>
         <inertial>
           <pose>0 0 -0.35 0 0 0</pose>
           <mass>0.0035185837720205686</mass>
@@ -452,13 +476,13 @@
             <izz>2.814867017616455e-06</izz>
           </inertia>
         </inertial>
-        <collision name="BRU_col">
+        <collision name="FLU_col">
           <pose>0 0 -0.35 0 0 0</pose>
           <geometry>
             <cylinder length="0.7" radius="0.04"/>
           </geometry>
         </collision>
-        <visual name="BRU_vis">
+        <visual name="FLU_vis">
           <pose>0 0 -0.35 0 0 0</pose>
           <geometry>
             <cylinder length="0.7" radius="0.04"/>
@@ -471,8 +495,8 @@
           </material>
         </visual>
       </link>
-      <link name="BRD">
-        <pose>0.495 -0.7 0.97 0.5856855434571508 0 0</pose>
+      <link name="FLD">
+        <pose>-0.745 1.0958327832184898 1.0355845490743452 1.0220178564557332 0 0</pose>
         <inertial>
           <pose>0 0 0.07500000000000001 0 0 0</pose>
           <mass>0.004272566008882119</mass>
@@ -485,13 +509,21 @@
             <izz>3.4180528071056957e-06</izz>
           </inertia>
         </inertial>
-        <collision name="BRD_col">
+        <collision name="FLD_col">
           <pose>0 0 0.07500000000000001 0 0 0</pose>
           <geometry>
             <cylinder length="0.85" radius="0.04"/>
           </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1.0</mu>
+                <mu2>1.0</mu2>
+              </ode>
+            </friction>
+          </surface>
         </collision>
-        <visual name="BRD_vis">
+        <visual name="FLD_vis">
           <pose>0 0 0.07500000000000001 0 0 0</pose>
           <geometry>
             <cylinder length="0.85" radius="0.04"/>
@@ -512,32 +544,32 @@
         <parent>body_middle</parent>
         <child>body_hind</child>
       </joint>
-      <joint name="FLMJ" type="fixed">
-        <parent>body_front</parent>
-        <child>FLM</child>
+      <joint name="BRMJ" type="fixed">
+        <parent>body_hind</parent>
+        <child>BRM</child>
       </joint>
-      <joint name="FLUJ" type="revolute">
-        <parent>FLM</parent>
-        <child>FLU</child>
+      <joint name="BRUJ" type="revolute">
+        <parent>BRM</parent>
+        <child>BRU</child>
         <axis>
           <xyz>1 0 0</xyz>
           <dynamics>
             <damping>0.2</damping>
           </dynamics>
           <limit>
-            <lower>-2.007128639793479</lower>
-            <upper>1.1344640137963142</upper>
+            <lower>-1.5707963267948966</lower>
+            <upper>1.5707963267948966</upper>
           </limit>
         </axis>
       </joint>
-      <joint name="FLDJ" type="fixed">
-        <parent>FLU</parent>
-        <child>FLD</child>
+      <joint name="BRDJ" type="fixed">
+        <parent>BRU</parent>
+        <child>BRD</child>
         <axis>
           <xyz>1 0 0</xyz>
           <dynamics>
             <damping>0.2</damping>
-            <spring_stiffness>233.9349247139039</spring_stiffness>
+            <spring_stiffness>292.4186558923799</spring_stiffness>
           </dynamics>
           <limit>
             <lower>-0.1</lower>
@@ -570,7 +602,7 @@
           <xyz>1 0 0</xyz>
           <dynamics>
             <damping>0.2</damping>
-            <spring_stiffness>233.9349247139039</spring_stiffness>
+            <spring_stiffness>292.4186558923799</spring_stiffness>
           </dynamics>
           <limit>
             <lower>-0.1</lower>
@@ -603,7 +635,7 @@
           <xyz>1 0 0</xyz>
           <dynamics>
             <damping>0.2</damping>
-            <spring_stiffness>233.9349247139039</spring_stiffness>
+            <spring_stiffness>292.4186558923799</spring_stiffness>
           </dynamics>
           <limit>
             <lower>-0.1</lower>
@@ -611,32 +643,32 @@
           </limit>
         </axis>
       </joint>
-      <joint name="BRMJ" type="fixed">
-        <parent>body_hind</parent>
-        <child>BRM</child>
+      <joint name="FLMJ" type="fixed">
+        <parent>body_front</parent>
+        <child>FLM</child>
       </joint>
-      <joint name="BRUJ" type="revolute">
-        <parent>BRM</parent>
-        <child>BRU</child>
+      <joint name="FLUJ" type="revolute">
+        <parent>FLM</parent>
+        <child>FLU</child>
         <axis>
           <xyz>1 0 0</xyz>
           <dynamics>
             <damping>0.2</damping>
           </dynamics>
           <limit>
-            <lower>-1.5707963267948966</lower>
-            <upper>1.5707963267948966</upper>
+            <lower>-2.007128639793479</lower>
+            <upper>1.1344640137963142</upper>
           </limit>
         </axis>
       </joint>
-      <joint name="BRDJ" type="fixed">
-        <parent>BRU</parent>
-        <child>BRD</child>
+      <joint name="FLDJ" type="fixed">
+        <parent>FLU</parent>
+        <child>FLD</child>
         <axis>
           <xyz>1 0 0</xyz>
           <dynamics>
             <damping>0.2</damping>
-            <spring_stiffness>233.9349247139039</spring_stiffness>
+            <spring_stiffness>292.4186558923799</spring_stiffness>
           </dynamics>
           <limit>
             <lower>-0.1</lower>

@@ -330,9 +330,9 @@ class MJCFileGenerator():
 		""" Main function called to generate a model """
 
 		# Eventually update model configuration
-		self.tendons.clear()
-		self.actuators.clear()
-		self.sensors.clear()
+		self.tendons = []
+		self.actuators = []
+		self.sensors = []
 		if config is not None:
 			for key, value in config.items():
 				config[key] = value
@@ -783,6 +783,12 @@ class SDFileGenerator():
 			length = etree.Element('length')
 		else:
 			cylinder = etree.Element('cylinder', radius=str(r), length=str(l))
+		surface = etree.Element("surface")
+		friction = etree.Element("friction")
+		ode = etree.Element("ode")
+		mu = etree.Element("mu")
+		mu2 = etree.Element("mu2")
+
 		visual = etree.Element('visual', name=name + "_vis")
 		material = etree.Element('material')
 		ambient = etree.Element('ambient')
@@ -799,6 +805,8 @@ class SDFileGenerator():
 		iyy.text = str(ir)
 		iyz.text = str(0)
 		izz.text = str(il)
+		mu.text = str(1.0)
+		mu2.text = str(1.0)
 		ambient.text = self.green
 		diffuse.text = self.green
 		specular.text = self.green
@@ -810,10 +818,13 @@ class SDFileGenerator():
 
 		inertia.extend([ixx, ixy, ixz, iyy, iyz, izz])
 		inertial.extend([copy(pose_vis_col_in), mass, inertia])
+		ode.extend([mu, mu2])
+		friction.extend([ode])
+		surface.extend([friction])
 		geometry.extend([cylinder])
 		material.extend([ambient, diffuse, specular, emissive])
 		visual.extend([copy(pose_vis_col_in), geometry, material])
-		collision.extend([copy(pose_vis_col_in), copy(geometry)])
+		collision.extend([copy(pose_vis_col_in), copy(geometry), copy(surface)])
 		tibia.extend([pose, inertial, collision, visual])
 
 		# Joint
@@ -871,16 +882,19 @@ class SDFileGenerator():
 	def generate_xml_plugins(self):
 		""" Generate the XML for the model plugins """
 
-		xml_plugin = etree.Element('plugin', name='generic_controller', filename='libgeneric_controller_plugin.so')
+		xml_plugin = etree.Element('plugin', name='tigrillo_controller', filename='libtigrillo_plugin.so')
 
-		for key in self.model_config["legs"]:
-			joint_type = etree.Element("type")
-			joint_type.text = "position"
-			joint_pid = etree.Element("pid")
-			joint_pid.text = str(self.model_config["legs"][key]["actuator_kp"]) + " 0 0"
-			joint = etree.Element("controller", joint_name=key)
-			joint.extend([joint_type, joint_pid])
-			xml_plugin.append(joint)
+		param_p = etree.Element("p")
+		param_i = etree.Element("i")
+		param_d = etree.Element("d")
+
+		param_p.text = "10.0"
+		param_i.text = "30.0"
+		param_d.text = "1.0"
+
+		xml_plugin.append(param_p)
+		xml_plugin.append(param_i)
+		xml_plugin.append(param_d)
 
 		self.plugins_array.extend([xml_plugin])
 
@@ -901,7 +915,7 @@ class SDFileGenerator():
 		self.xml_model.extend(self.joints_array)
 
 		if self.gazebo:
-			#self.xml_model.extend(self.plugins_array)
+			self.xml_model.extend(self.plugins_array)
 			self.xml_sdf.append(self.xml_model)
 		else:
 			self.xml_world.append(self.xml_model)
@@ -971,7 +985,7 @@ if __name__ == '__main__':
 				'tibia_spring_to_joint_dst': 3.5,
 				'hip_damping': 0.2,
 				'knee_damping': 0.2,
-				'spring_stiffness': 400,
+				'spring_stiffness': 500,
 				'actuator_kp': 254,
 			},
 			'FR': {
@@ -990,7 +1004,7 @@ if __name__ == '__main__':
 				'tibia_spring_to_joint_dst': 3.5,
 				'hip_damping': 0.2,
 				'knee_damping': 0.2,
-				'spring_stiffness': 400,
+				'spring_stiffness': 500,
 				'actuator_kp': 254,
 			},
 			'BL': {
@@ -1009,7 +1023,7 @@ if __name__ == '__main__':
 				'tibia_spring_to_joint_dst': 3.5,
 				'hip_damping': 0.2,
 				'knee_damping': 0.2,
-				'spring_stiffness': 400,
+				'spring_stiffness': 500,
 				'actuator_kp': 254,
 			},
 			'BR': {
@@ -1028,13 +1042,13 @@ if __name__ == '__main__':
 				'tibia_spring_to_joint_dst': 3.5,
 				'hip_damping': 0.2,
 				'knee_damping': 0.2,
-				'spring_stiffness': 400,
+				'spring_stiffness': 500,
 				'actuator_kp': 254,
 			},
 		},
 	}
 
-	folder = "../../models/"
+	folder = "../data/robots/"
 	gazebo_folder = "/home/gabs48/.gazebo/models/tigrillo/"
 
 	# Generate the model as an MJCF file

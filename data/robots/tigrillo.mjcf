@@ -96,25 +96,25 @@
     </body>
   </worldbody>
   <tendon>
-    <spatial range="0.27115 2.71155" stiffness="400">
+    <spatial range="0.27115 2.71155" stiffness="500">
       <site site="s1_1"/>
       <site site="s1_2"/>
     </spatial>
   </tendon>
   <tendon>
-    <spatial range="0.27115 2.71155" stiffness="400">
+    <spatial range="0.27115 2.71155" stiffness="500">
       <site site="s2_1"/>
       <site site="s2_2"/>
     </spatial>
   </tendon>
   <tendon>
-    <spatial range="0.27115 2.71155" stiffness="400">
+    <spatial range="0.27115 2.71155" stiffness="500">
       <site site="s3_1"/>
       <site site="s3_2"/>
     </spatial>
   </tendon>
   <tendon>
-    <spatial range="0.27115 2.71155" stiffness="400">
+    <spatial range="0.27115 2.71155" stiffness="500">
       <site site="s4_1"/>
       <site site="s4_2"/>
     </spatial>

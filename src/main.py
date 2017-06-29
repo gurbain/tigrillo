@@ -80,4 +80,4 @@ if __name__ == "__main__":
 
 	# Run the experiment
 	e = Experiment(config)
-	e.run()
+	e.start()

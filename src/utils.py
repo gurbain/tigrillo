@@ -4,11 +4,13 @@ This file contains all third-party methods
 """
 
 import datetime
+import git
+import logging
 from mpi4py import MPI as mpi
 import os
 import platform
-import git
 import pyopencl
+import threading
 
 __author__ = "Gabriel Urbain" 
 __copyright__ = "Copyright 2017, Human Brain Projet, SP10"
@@ -83,3 +85,36 @@ def getConfigString(config):
 		for (key, val) in config.items(sec):
 			string += "\n" + key + "=" + val
 	return string
+
+class LogPipe(threading.Thread):
+
+	def __init__(self, name):
+		"""Setup the object with a logger and a loglevel
+		and start the thread
+		"""
+		threading.Thread.__init__(self)
+		self.daemon = False
+
+		self.log = logging.getLogger(name)
+
+		self.fdRead, self.fdWrite = os.pipe()
+		self.pipeReader = os.fdopen(self.fdRead)
+		self.start()
+
+	def fileno(self):
+		"""Return the write file descriptor of the pipe
+		"""
+		return self.fdWrite
+
+	def run(self):
+		"""Run the thread, logging everything.
+		"""
+		for line in iter(self.pipeReader.readline, ''):
+			self.log.info(line.strip('\n'))
+
+		self.pipeReader.close()
+
+	def close(self):
+		"""Close the write end of the pipe.
+		"""
+		os.close(self.fdWrite)

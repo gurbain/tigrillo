@@ -1,0 +1,17 @@
+# TODO list:
+
+## Milestone 01/07: v0.1
+- Working run/pipe in open loop
+- Optimization without mpi
+- Noise system: morphological/impulse/gaussian
+- Result save system
+
+## Milestone 15/07: v0.2
+- Refine model
+- Closed-loop system
+- Optimization with MPI
+- Analysis system
+
+## Milestone 30/07: v0.3
+- spiking camera sensors
+- deep reinforcement learning framework

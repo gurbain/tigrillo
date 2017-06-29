@@ -47,22 +47,48 @@ class Experiment():
 		self.log.info(getPythonString())
 		self.log.info(getConfigString(self.config))
 
-	def run(self):
+		# Experiment parameters
+		self.mode = None
+		self.simtime = 0
+
+
+	def start(self):
 		"""
 		Run the whole pipe
 		"""
 
 		for params in self.pipe:
-			self.run_seq(params)
+			self.phys = eval(params["phys"])(self.config)
+			self.cont = eval(params["ctrl"])(self.config)
+			self.start_seq(params)
 
-	def run_seq(self, params):
+	def start_seq(self, params):
 		"""
 		Run a full sequence
 		"""
 
-		physics = ast.literal_eval(params["phys"])(self.config)
-		controller = ast.literal_eval(params["phys"])(self.config)
+		# Set-up
+		self.mode = params["mode"]
+		self.simtime = params["time"]
+		
 
-		if params["mode"] == "run" and params["conn"] == "ol":
+		if self.mode == "run":
+			self.phys.start_sim()
+			self.cont.run(self.simtime, self.phys)
+			self.phys.stop_sim()
+
+		if self.mode == "optim":
+			opt = Optim(self.simtime, self.phys, self.cont, self.config)
+			params, score, duration = opt.run()
+			opt.plot()
+
+
+	def save(self):
+		"""
+		Save all usefull information to analyse the experiment
+		and reproduce it later
+		"""
+
+		return
 
 
