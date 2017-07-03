@@ -2,6 +2,7 @@
 Contains the files for optimization algorithms
 """
 
+from copy import copy, deepcopy
 import logging
 import math
 import matplotlib
@@ -45,14 +46,13 @@ class Score():
 	def start(self):
 
 		# Take a measurement in the initial state
-		self.init_pose_state = self.phys.sim_model_state
-		self.init_time = self.phys.sim_duration
+		self.init_pose_state = deepcopy(self.phys.sim_model_state)
+		self.init_time = deepcopy(self.phys.sim_duration)
 
 	def stop(self):
 
 		# Take a measurement in the final state
 		self.final_pose_state = self.phys.sim_model_state
-		print(self.final_pose_state)
 		self.final_time = self.phys.sim_duration
 
 	def get_score(self):
@@ -62,10 +62,12 @@ class Score():
 
 	def get_dist_score(self):
 
-		return math.sqrt((self.init_pose_state["pos"]["x"] - \
+		dist = math.sqrt((self.final_pose_state["pos"]["x"] - \
 			self.init_pose_state["pos"]["x"]) ** 2 + \
-			(self.init_pose_state["pos"]["y"] - \
+			(self.final_pose_state["pos"]["y"] - \
 			self.init_pose_state["pos"]["y"]) ** 2)
+
+		return dist
 
 class Optim():
 
@@ -163,25 +165,13 @@ class Optim():
 
 	def save(self):
 
-		#save self.hist_score
+		# save here
+
 		return
 
-	def plot(self):
+	def plot(self, filename="score.png"):
 
 		plt.plot(self.hist_score)
-		plt.savefig("score.png", format='png', dpi=300)
+		plt.savefig(filename, format='png', dpi=300)
 		plt.close()
 
-
-def optimize(n_it):
-
-	# Optimize
-	n_it = int(n_it)
-	opt = Optim(n_it)
-	params, score, duration = opt.run()
-	namefile = time.strftime("%Y%m%d-%H%M%S", time.localtime())
-	pickle.dump(params, open("results/" + namefile + ".pkl", "wb"))
-	opt.plot()
-	print("== Optimization time for " + str(n_it) + \
-		" epochs: {0:.1f}s. ".format(duration) + \
-		" {0:.3f}s in average per iteration ==".format(duration/n_it))
