@@ -79,12 +79,12 @@ def getGPUString():
 def getConfigString(config):
 	""" Return a string with the config file """
 
-	string = "Config: "
+	string = "Config:\n\n"
 	for sec in config.sections():
 		string += "\n[" + sec + "]"
 		for (key, val) in config.items(sec):
 			string += "\n" + key + "=" + val
-	return string
+	return string + "\n\n"
 
 class LogPipe(threading.Thread):
 

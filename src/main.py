@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 
 """
 This file is the main example to run. It parses the command line and 

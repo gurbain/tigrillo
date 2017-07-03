@@ -51,7 +51,6 @@ class Experiment():
 		self.mode = None
 		self.simtime = 0
 
-
 	def start(self):
 		"""
 		Run the whole pipe
@@ -81,7 +80,6 @@ class Experiment():
 			opt = Optim(self.simtime, self.phys, self.cont, self.config)
 			params, score, duration = opt.run()
 			opt.plot()
-
 
 	def save(self):
 		"""
