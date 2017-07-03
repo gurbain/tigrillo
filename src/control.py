@@ -5,12 +5,12 @@ and bullet are supportedbut bullet should be also soon.
 
 import ast
 import math
-import pickle as pkl
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import logging
+import pickle as pkl
 import psutil
 import rospy as ros
 import subprocess
@@ -65,6 +65,20 @@ class Controller():
 		self.st_timestep = 0
 
 		self.hist_cmd = []
+
+	def __getstate__(self):
+		""" This is called before pickling. """
+
+		state = self.__dict__.copy()
+		del state['hist_cmd']
+		del state["log"]
+
+		return state
+
+	def __setstate__(self, state):
+		""" This is called while unpickling. """
+
+		self.__dict__.update(state)
 
 	def get_params_len(self):
 
@@ -138,7 +152,7 @@ class Controller():
 			traceback.print_exc()
 			sys.exit()
 
-		print("Simulation of {0:.2f}s (ST)".format(st) + \
+		self.log.info("Simulation of {0:.2f}s (ST)".format(st) + \
 			" finished in {0:.2f}s (RT)".format(rt) + \
 			" with acceleration of {0:.3f} x".format(st/rt))
 
@@ -148,9 +162,9 @@ class Controller():
 		"""
 		f = open(filename,'rb')
 		tmp_dict = pkl.load(f)
-		f.close()          
+		f.close()
 
-		self.__dict__.update(tmp_dict)
+		self.__dict__.update(tmp_dict.__dict__)
 
 	def save(self, filename):
 		"""
@@ -158,7 +172,7 @@ class Controller():
 		"""
 
 		f = open(filename,'wb')
-		pkl.dump(self.__dict__, f, 2)
+		pkl.dump(self, f, 2)
 		f.close()
 
 	def plot(self, filename="history.png"):
@@ -176,19 +190,22 @@ class Sine(Controller):
 
 		self.n_motors = 4
 
-		self.norm_f = 2 * math.pi * 10
-		self.norm_a = 2
-		self.norm_phi = 2 * math.pi
+		self.norm_f = 2 * math.pi * self.params[0]["f"]
+		self.norm_a = self.params[0]["a"]
+		self.norm_phi = self.params[0]["phi"]
 
 	def set_norm_params(self, liste):
 
 		j = 0
+		params = []
 		for i in range(self.n_motors):
-			f = liste[j] / self.norm_f 
-			a = liste[j+1] / self.norm_a
-			phi = liste[j+2] / self.norm_phi
-			self.params.append({"f": f, "a": a, "phi": phi})
+			f = liste[j] * self.norm_f
+			a = liste[j+1] * self.norm_a
+			phi = liste[j+2] * self.norm_phi
+			params.append({"f": f, "a": a, "phi": phi})
 			j += 3
+
+		self.params = params
 
 	def get_norm_params(self):
 

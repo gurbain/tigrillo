@@ -10,7 +10,9 @@ from mpi4py import MPI as mpi
 import os
 import platform
 import pyopencl
+from shutil import copyfile
 import threading
+
 
 __author__ = "Gabriel Urbain" 
 __copyright__ = "Copyright 2017, Human Brain Projet, SP10"
@@ -28,6 +30,10 @@ def mkdir(path):
 
 	if not os.path.exists(path):
 		os.makedirs(path)
+
+def cp(src, dst):
+
+	copyfile(src, dst)
 
 def getDateString():
 	""" Return a string with datetime """

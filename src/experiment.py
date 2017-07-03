@@ -51,6 +51,13 @@ class Experiment():
 		self.mode = None
 		self.simtime = 0
 
+		# Folder for saving results
+		if "result_folder" in config["Experiment"]:
+			self.result_folder = config.get("Experiment", "result_folder")
+		else:
+			self.result_folder = "results"
+		mkdir(self.result_folder)
+
 	def start(self):
 		"""
 		Run the whole pipe
@@ -79,13 +86,23 @@ class Experiment():
 		if self.mode == "optim":
 			opt = Optim(self.simtime, self.phys, self.cont, self.config)
 			params, score, duration = opt.run()
-			opt.plot()
+			opt.save()
+			self.cont.set_norm_params(params)
+
+		self.save()
 
 	def save(self):
 		"""
 		Save all usefull information to analyse the experiment
 		and reproduce it later
 		"""
+		folder = self.result_folder + '/' + time.strftime("%Y%m%d-%H%M%S" + "/")
+		mkdir(folder)
+
+		# self.phys.save()
+		# save optim params..
+		self.cont.save(folder + "best_cont.pkl")
+		cp(self.config.get("Config", "filename"), folder + "config.conf")
 
 		return
 

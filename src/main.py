@@ -9,6 +9,7 @@ import argparse
 import ast
 import configparser
 import logging
+import os
 import time
 
 from experiment import *
@@ -47,6 +48,9 @@ if __name__ == "__main__":
 	# Parse config file
 	config = configparser.ConfigParser()
 	config.read(args.config)
+	config.add_section('Config')
+	config.set('Config', 'filename',  os.path.abspath(args.config))
+
 
 	# Manually change forced command-line arguments
 	if args.gui:
