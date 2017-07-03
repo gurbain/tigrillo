@@ -6,6 +6,10 @@ and bullet are supportedbut bullet should be also soon.
 import ast
 import math
 import pickle as pkl
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+import numpy as np
 import logging
 import psutil
 import rospy as ros
@@ -42,6 +46,8 @@ class Controller():
 		else:
 			if "params" in params:
 				self.params = ast.literal_eval(params["params"])
+			else:
+				self.params = dict()
 
 			if "timestep" in params:
 				self.timestep = float(params["timestep"])
@@ -57,6 +63,8 @@ class Controller():
 		self.t = 0
 		self.t_init = 0
 		self.st_timestep = 0
+
+		self.hist_cmd = []
 
 	def get_params_len(self):
 
@@ -130,6 +138,10 @@ class Controller():
 			traceback.print_exc()
 			sys.exit()
 
+		print("Simulation of {0:.2f}s (ST)".format(st) + \
+			" finished in {0:.2f}s (RT)".format(rt) + \
+			" with acceleration of {0:.3f} x".format(st/rt))
+
 	def load(self, filename):
 		"""
 		Load itself from a pickle file
@@ -149,6 +161,12 @@ class Controller():
 		pkl.dump(self.__dict__, f, 2)
 		f.close()
 
+	def plot(self, filename="history.png"):
+
+		plt.plot(np.array(self.hist_cmd))
+		plt.savefig(filename, format='png', dpi=300)
+		plt.close()
+
 
 class Sine(Controller):
 
@@ -157,10 +175,9 @@ class Sine(Controller):
 		super(Sine, self).__init__(config)
 
 		self.n_motors = 4
-		self.hist_cmd = [[0] for i in range(self.n_motors)]
 
 		self.norm_f = 2 * math.pi * 10
-		self.norm_a = 3
+		self.norm_a = 2
 		self.norm_phi = 2 * math.pi
 
 	def set_norm_params(self, liste):
@@ -188,14 +205,163 @@ class Sine(Controller):
 		cmd = []
 		for i in range(self.n_motors):
 			cmd.append(self.params[i]["a"] * math.sin( \
-				self.params[i]["f"] * self.t + self.params[i]["a"]))
+				self.params[i]["f"] * self.t + self.params[i]["phi"]))
 		
 		self.hist_cmd.append(cmd)
 		return cmd
 
-	def plot(self, filename="history.png"):
 
-		plt.plot(self.hist_cmd[0][0:10000], "r-")
-		plt.savefig(filename, format='png', dpi=300)
-		plt.close()
- 
+class CPG(Controller):
+
+
+	def __init__(self, config):
+
+		super(CPG, self).__init__(config)
+
+		self.n_motors = 4
+
+		self.r = [float(self.params[i]["mu"]) for i in range(self.n_motors)]
+		self.phi = [np.pi * float(self.params[i]["duty_factor"]) for i in range(self.n_motors)]
+		self.o = [float(self.params[i]["o"]) for i in range(self.n_motors)]
+
+		self.kappa_r = [1] * 4
+		self.kappa_phi = [1] * 4
+		self.kappa_o = [1] * 4
+		self.f_r = [0] * 4
+		self.f_phi = [0] * 4
+		self.f_o = [0] * 4
+
+		self.dt = float(self.config["Controller"]["integ_time"])
+		self.gamma = 0.01
+		self.prev_t= -1
+
+		self.coupling = [self.params[i]["coupling"] for i in range(self.n_motors)]
+		a, b = float(self.params[1]["phase_offset"]), float(self.params[2]["phase_offset"])
+		c = float(self.params[3]["phase_offset"])
+		d = a-b
+		e = a-c
+		f = b-c
+		self.psi = [[0, a, b, c],
+					[-1*a, 0, d, e],
+					[-1*b, -1*d, 0, f],
+					[-1*c, -1*e, -1*f, 0]]
+
+	def step_cpg(self):
+
+		cmd = []
+
+		for i in range(self.n_motors):
+
+			# Fetch current motor values
+			dt = self.dt
+			gamma = self.gamma
+
+			mu = float(self.params[i]["mu"])
+			omega = float(self.params[i]["omega"])
+			d = float(self.params[i]["duty_factor"])
+			
+			r = self.r[i]
+			phi = self.phi[i]
+			o = self.o[i]
+
+			kappa_r = self.kappa_r[i]
+			kappa_phi = self.kappa_phi[i]
+			kappa_o = self.kappa_o[i]
+			f_r = self.f_r[i]
+			f_phi = self.f_phi[i]
+			f_o = self.f_o[i]
+			cpl = self.coupling[i]
+			 
+			# Compute step evolution of r, phi and o
+			d_r = gamma * (mu + kappa_r * f_r - r * r) * r
+			d_phi = omega + kappa_phi * f_phi
+			d_o = kappa_o * f_o
+
+			# Add phase coupling
+			for j in range(self.n_motors):
+				d_phi += cpl[j] * np.sin(self.phi[j] - phi - self.psi[i][j])
+
+			# Update r, phi and o
+			self.r[i] += dt * d_r
+			self.phi[i] += dt * d_phi
+			self.o[i] += dt * d_o
+
+			# Threshold phi to 2pi max
+			phi_thr = 0
+			phi_2pi = self.phi[i] % (2 * math.pi)
+			if phi_2pi < ((2 * math.pi) * d):
+				phi_thr = phi_2pi / (2 * d)
+			else:
+				phi_thr = (phi_2pi + (2 * math.pi) * (1 - 2 * d)) / (2 * (1 - d))
+
+			# Save action
+			action = self.r[i] * np.cos(phi_thr) + self.o[i]
+			cmd.append(action)
+
+		self.hist_cmd.append(cmd)
+		return cmd
+
+	def step(self, t):
+
+		self.t = t
+		n_steps = (int(self.t/self.dt) - self.prev_t)
+		cmd = []
+
+		for _ in range(n_steps):
+			cmd = self.step_cpg()
+
+		self.prev_t = int(self.t/self.dt)
+
+		return cmd
+
+
+if __name__ == '__main__':
+
+	# Test Sine evolution
+	config = {"Controller":
+				{"params": "[{'f': 6, 'a': 0.4, 'phi': 0}, \
+						{'f': 6, 'a': 0.4, 'phi': 0},\
+						{'f': 6, 'a': 0.4, 'phi': 3.14},\
+						{'f': 6, 'a': 0.4, 'phi': 3.14}]",
+				"timestep": 0.001,
+				"simtime": 5}}
+	t = 0
+	dt = config["Controller"]["timestep"]
+	st = config["Controller"]["simtime"]
+	n = int(st / dt)
+	sc = Sine(config)
+
+	t_init = time.time()
+	for i in range(n): 
+		sc.step(t)
+		t += dt
+	t_tot = time.time() - t_init
+	print(str(n) + " iterations computed in " + str(t_tot) + " s")
+
+	sc.plot("sine.png")
+
+	# Test CPG evolution
+	config = {"Controller":
+				{"params": "[{'mu': 0.4, 'o': 0, 'omega': 6.35, 'duty_factor': 0.6, 'phase_offset': 0, 'coupling': [5,5,5,0]}, \
+		 					{'mu': 0.4, 'o': 0, 'omega': 6.35, 'duty_factor': 0.6, 'phase_offset': 6.28, 'coupling': [5,5,5,0]},\
+							{'mu': 0.4, 'o': 0, 'omega': 6.35, 'duty_factor': 0.9, 'phase_offset': 3.14, 'coupling': [5,5,5,0]},\
+		 					{'mu': 0.4, 'o': 0, 'omega': 6.35, 'duty_factor': 0.9, 'phase_offset': 3.14, 'coupling': [5,5,5,0]}]",
+				"integ_time": 0.001,
+				"timestep": 0.01,
+				"simtime": 10}}
+
+	t = 0
+	dt = config["Controller"]["timestep"]
+	st = config["Controller"]["simtime"]
+	n = int(st / dt)
+	sc = CPG(config)
+
+	t_init = time.time()
+	for i in range(n): 
+		sc.step(t)
+		t += dt
+	t_tot = time.time() - t_init
+	print(str(n) + " iterations computed in " + str(t_tot) + " s")
+
+	sc.plot("cpg.png")
+

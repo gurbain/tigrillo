@@ -5,6 +5,7 @@ build/*
 data/logs/*
 data/results/*
 data/meshes/*
+*.png
 
 # deprecated folders
 tests/*
