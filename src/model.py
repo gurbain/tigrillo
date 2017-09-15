@@ -1,7 +1,7 @@
 """
 This script allows the user to create SDF and MJCF robot files
 that will be used to realize a simulation with Bullet, MuJoCo
-or Gazebo.
+or Gazebo. USE WITH PYTHON3 ONLY!!
 """
 
 
@@ -9,8 +9,6 @@ from copy import copy
 from lxml import etree
 import math
 import numpy as np
-
-SCALE = 10
 
 __author__ = "Gabriel Urbain" 
 __copyright__ = "Copyright 2017, Human Brain Projet, SP10"
@@ -28,7 +26,7 @@ class Point(object):
 	Class representing a 3D point for geometric manipulations
 	"""
 
-	def __init__(self, x, y, z, model_scale=SCALE):
+	def __init__(self, x, y, z, model_scale=1):
 
 		self.x = x
 		self.y = y
@@ -59,7 +57,7 @@ class Leg(object):
 	Create the XML for a single leg
 	"""
 
-	def __init__(self, leg_id, config, tendons, actuators, sensors, model_scale=SCALE):
+	def __init__(self, leg_id, config, tendons, actuators, sensors, model_scale=1):
 
 		self.leg_id = leg_id
 		self.config = config
@@ -161,7 +159,7 @@ class MotorLeg(Leg):
 	Create the XML for a single leg and add the motors
 	"""
 
-	def __init__(self, leg_id, config, tendons, actuators, sensors, model_scale=SCALE):
+	def __init__(self, leg_id, config, tendons, actuators, sensors, model_scale=1):
 
 		self.leg_id = leg_id
 		self.config = config
@@ -194,10 +192,10 @@ class MotorLeg(Leg):
 
 class MJCFileGenerator():
 	"""
-	Generate a MJFC XML model file
+	Generate a MJFC XML model file. Deprecated!
 	"""
 
-	def __init__(self, model_config, filename='model.xml', model_scale=SCALE, VERSION=2):
+	def __init__(self, model_config, filename='model.xml', model_scale=1, VERSION=2):
 
 		# Options
 		self.model_config = model_config
@@ -371,7 +369,7 @@ class SDFileGenerator():
 	Generate a SDF XML model file
 	"""
 
-	def __init__(self, model_config, filename='model.sdf', gazebo=False, model_scale=SCALE, VERSION=2):
+	def __init__(self, model_config, filename='model.sdf', gazebo=False, model_scale=1, VERSION=2):
 
 		# Options
 		self.model_config = model_config
@@ -390,12 +388,6 @@ class SDFileGenerator():
 		self.joints_array = []
 		self.plugins_array = []
 
-		# Some default values
-		self.z_offset = 2
-		self.density = 1
-		self.radius = 0.04
-		self.motor_mass = 0.067
-		self.spring_compression_tolerance = 0.1 #in rotation in radians
 		self.red = "1 0 0 1"
 		self.green = "0 1 0 1"
 		self.blue = "0 0 1 1"
@@ -403,6 +395,8 @@ class SDFileGenerator():
 		self.black = "0 0 0 0"
 
 		# Parameters
+		self.z_offset = self.model_config["default_height"] / self.model_scale
+		self.density = self.model_config["default_density"]
 		self.front_y = (self.model_config["body"]["middle"]["length"] + 
 			self.model_config["body"]["front"]["length"]) / 2 / self.model_scale
 		self.back_y = - (self.model_config["body"]["middle"]["length"] + 
@@ -413,6 +407,7 @@ class SDFileGenerator():
 		self.back_knee_z = 0
 		self.front_knee_y = 0
 		self.front_knee_z = 0
+		self.knee_angle = 0
 
 	def generate_xml_header(self):
 		""" Generate the XML for all the header fields """
@@ -425,7 +420,10 @@ class SDFileGenerator():
 		xml_static = etree.Element('static')
 		xml_static.text = "False"
 
-		self.model_configs_array.extend([xml_static])
+		xml_collide = etree.Element('self_collide')
+		xml_collide.text = "False"
+
+		self.model_configs_array.extend([xml_static, xml_collide])
 
 	def _create_body(self):
 		""" Generate the XML for the body link """
@@ -440,7 +438,7 @@ class SDFileGenerator():
 			h = self.model_config["body"][part]["height"] / self.model_scale
 			l = self.model_config["body"][part]["length"] / self.model_scale
 			vol = w * l * h
-			m = self.model_config["body"][part]["mass"]
+			m = self.model_config["body"][part]["mass"] / (self.model_scale * self.model_scale * self.model_scale)
 			ih = m / 12 * (l**2 + w**2) #z
 			iw = m / 12 * (h**2 + l**2) #x
 			il = m / 12 * (h**2 + w**2) #y
@@ -529,9 +527,11 @@ class SDFileGenerator():
 		""" Generate the XML for a the down leg link """
 
 		name = name + "M"
+
 		motor_w = config["motor"]["width"] / self.model_scale #x
 		motor_l = config["motor"]["length"] / self.model_scale #y
 		motor_h = config["motor"]["height"] / self.model_scale #z
+		m = config["motor"]["mass"] / (self.model_scale * self.model_scale * self.model_scale)
 		vol = motor_w * motor_l * motor_h
 
 		if leg_id == 1 or leg_id == 2: # Front
@@ -542,7 +542,7 @@ class SDFileGenerator():
 			x = (-1)**(leg_id % 2) * (self.back_x - motor_w / 2) 
 		z = - motor_h / 2  + self.z_offset
 		
-		m = self.motor_mass
+		
 		iw = m/12 * (motor_h**2 + motor_l**2) #x
 		il = m/12 * (motor_h**2 + motor_w**2) #y
 		ih = m/12 * (motor_l**2 + motor_w**2) #z
@@ -614,7 +614,9 @@ class SDFileGenerator():
 
 		h_attach = config["motor"]["leg_attachment_height"] / self.model_scale #z
 		l = config["femur_length"] / self.model_scale
-		r = self.radius
+		r = config["radius"] / self.model_scale
+
+		slack = config["joint_slack"] / self.model_scale
 		a = config['femur_angle'] / 360 * 2 * math.pi
 		vol = l * math.pi * r**2
 
@@ -622,10 +624,10 @@ class SDFileGenerator():
 		z_1 = - h_attach + self.z_offset
 		if leg_id == 1 or leg_id == 2: # Front
 			y_1 = self.front_y
-			x_1 = (-1)**(leg_id % 2) * (self.front_x + self.radius + 0.005)
+			x_1 = (-1)**(leg_id % 2) * (self.front_x + r + slack)
 		else: # back
 			y_1 = self.back_y
-			x_1 = (-1)**(leg_id % 2) * (self.back_x + self.radius + 0.005)
+			x_1 = (-1)**(leg_id % 2) * (self.back_x + r + slack)
 
 		# Center point
 		x = x_1
@@ -715,11 +717,11 @@ class SDFileGenerator():
 		j_xyz.text = "1 0 0"
 		j_damping.text = str(damp)
 		j_lower.text = str(-math.pi / 2 - a)
-		j_upper.text = str(math.pi /2 - a)
+		j_upper.text = str(math.pi / 2 - a)
 
 		j_dynamics.extend([j_damping])
 		j_limit.extend([j_lower, j_upper])
-		j_axis.extend([j_xyz, j_dynamics, j_limit])		
+		j_axis.extend([j_xyz, j_dynamics])		
 		joint.extend([j_parent, j_child, j_axis])
 		self.joints_array.append(joint)
 
@@ -731,25 +733,39 @@ class SDFileGenerator():
 		name_u = name + "U"
 		name = name + "D"
 
+		## Tibia values
 		e = config["spring_length"] / self.model_scale
 		f = config["femur_spring_tibia_joint_dst"] / self.model_scale
 		g = config["tibia_spring_to_joint_dst"] / self.model_scale
 		a_femur = config['femur_angle'] / 360 * 2 * math.pi
-
 		l = config["tibia_length"] / self.model_scale
-		r = self.radius
+		r = config["radius"] / self.model_scale
+		slack = config["joint_slack"] / self.model_scale
+		compression_tol = config["spring_comp_tol"]
 		a_radius = math.acos((f**2 + g**2 - e**2) / (2 * f * g))
 		a = a_femur + a_radius
+		self.knee_angle = a
 		k_spring = config["spring_stiffness"]
 		vol = l * math.pi * r**2
+		m = self.density * vol
+		il = m / 2 * r**2
+		ir = m / 12 * (3 * r**2 + l**2)
+		damp = config['hip_damping']
 
-		# Attachempent point 1
+		## Foot values
+		foot_r = config["foot"]["radius"] / self.model_scale
+		foot_vol = 4 * math.pi * r**3 / 3 
+		foot_m = self.density * vol
+		mu1 = config["foot"]["mu1"]
+		mu2 = config["foot"]["mu2"]
+
+		# Attachement point
 		if leg_id == 1 or leg_id == 2: # Front
-			x_1 = (-1)**(leg_id % 2) * (self.front_x + self.radius + 0.005)
+			x_1 = (-1)**(leg_id % 2) * (self.front_x + r + slack)
 			y_1 = self.front_knee_y
 			z_1 = self.front_knee_z
 		else: # back
-			x_1 = (-1)**(leg_id % 2) * (self.back_x + self.radius + 0.005)
+			x_1 = (-1)**(leg_id % 2) * (self.back_x + r + slack)
 			y_1 = self.back_knee_y
 			z_1 = self.back_knee_z
 
@@ -758,77 +774,104 @@ class SDFileGenerator():
 		y = y_1 + (l / 2 - g) * math.sin(a)
 		z = z_1 - (l / 2 - g) * math.cos(a)
 
-		m = self.density * vol
-		il = m / 2 * r**2
-		ir = m / 12 * (3 * r**2 + l**2)
-		damp = config['hip_damping']
-
-		tibia = etree.Element('link', name=name)
+		leg_down = etree.Element('link', name=name)
 		pose = etree.Element('pose')
-		pose_vis_col_in = etree.Element('pose')
-		inertial = etree.Element('inertial')
-		mass = etree.Element('mass')
-		inertia = etree.Element('inertia')
-		ixx = etree.Element('ixx')
-		ixy = etree.Element('ixy')
-		ixz = etree.Element('ixz')
-		iyy = etree.Element('iyy')
-		iyz = etree.Element('iyz')
-		izz = etree.Element('izz')
-		collision = etree.Element('collision', name=name + "_col")
-		geometry = etree.Element('geometry')
+		tibia_pose = etree.Element('pose')
+		tibia_inertial = etree.Element('inertial')
+		tibia_mass = etree.Element('mass')
+		tibia_inertia = etree.Element('inertia')
+		tibia_ixx = etree.Element('ixx')
+		tibia_ixy = etree.Element('ixy')
+		tibia_ixz = etree.Element('ixz')
+		tibia_iyy = etree.Element('iyy')
+		tibia_iyz = etree.Element('iyz')
+		tibia_izz = etree.Element('izz')
+		tibia_collision = etree.Element('collision', name=name + "T_col")
+		tibia_geometry = etree.Element('geometry')
 		if self.gazebo:
-			cylinder = etree.Element('cylinder')
-			radius = etree.Element('radius')
-			length = etree.Element('length')
+			tibia_cylinder = etree.Element('cylinder')
+			tibia_radius = etree.Element('radius')
+			tibia_length = etree.Element('length')
 		else:
-			cylinder = etree.Element('cylinder', radius=str(r), length=str(l))
-		surface = etree.Element("surface")
-		friction = etree.Element("friction")
-		ode = etree.Element("ode")
-		mu = etree.Element("mu")
-		mu2 = etree.Element("mu2")
+			tibia_cylinder = etree.Element('cylinder', radius=str(r), length=str(l))
 
-		visual = etree.Element('visual', name=name + "_vis")
-		material = etree.Element('material')
-		ambient = etree.Element('ambient')
-		diffuse = etree.Element('diffuse')
-		specular = etree.Element('specular')
-		emissive = etree.Element('emissive')
+		tibia_visual = etree.Element('visual', name=name + "T_vis")
+		tibia_material = etree.Element('material')
+		tibia_ambient = etree.Element('ambient')
+		tibia_diffuse = etree.Element('diffuse')
+		tibia_specular = etree.Element('specular')
+		tibia_emissive = etree.Element('emissive')
 
 		pose.text = str(x_1) + " " + str(y_1) + " " + str(z_1) + " " + str(a) + " 0 0"
-		pose_vis_col_in.text = "0 0 " + str(l / 2 - g) + " 0 0 0"
-		mass.text = str(m)
-		ixx.text = str(ir)
-		ixy.text = str(0)
-		ixz.text = str(0)
-		iyy.text = str(ir)
-		iyz.text = str(0)
-		izz.text = str(il)
-		mu.text = str(1.0)
-		mu2.text = str(1.0)
-		ambient.text = self.green
-		diffuse.text = self.green
-		specular.text = self.green
-		emissive.text = self.black
+		tibia_pose.text = "0 0 " + str(l / 2 - g) + " 0 0 0"
+		tibia_mass.text = str(m)
+		tibia_ixx.text = str(ir)
+		tibia_ixy.text = str(0)
+		tibia_ixz.text = str(0)
+		tibia_iyy.text = str(ir)
+		tibia_iyz.text = str(0)
+		tibia_izz.text = str(il)
+		tibia_ambient.text = self.green
+		tibia_diffuse.text = self.green
+		tibia_specular.text = self.green
+		tibia_emissive.text = self.black
 		if self.gazebo:
-			radius.text = str(r)
-			length.text = str(l)
-			cylinder.extend([radius, length])
+			tibia_radius.text = str(r)
+			tibia_length.text = str(l)
+			tibia_cylinder.extend([tibia_radius, tibia_length])
 
-		inertia.extend([ixx, ixy, ixz, iyy, iyz, izz])
-		inertial.extend([copy(pose_vis_col_in), mass, inertia])
-		ode.extend([mu, mu2])
-		friction.extend([ode])
-		surface.extend([friction])
-		geometry.extend([cylinder])
-		material.extend([ambient, diffuse, specular, emissive])
-		visual.extend([copy(pose_vis_col_in), geometry, material])
-		collision.extend([copy(pose_vis_col_in), copy(geometry), copy(surface)])
-		tibia.extend([pose, inertial, collision, visual])
+		tibia_inertia.extend([tibia_ixx, tibia_ixy, tibia_ixz, tibia_iyy, tibia_iyz, tibia_izz])
+		tibia_inertial.extend([copy(tibia_pose), tibia_mass, tibia_inertia])
+		tibia_geometry.extend([tibia_cylinder])
+		tibia_material.extend([tibia_ambient, tibia_diffuse, tibia_specular, tibia_emissive])
+		tibia_visual.extend([copy(tibia_pose), tibia_geometry, tibia_material])
+		tibia_collision.extend([copy(tibia_pose), copy(tibia_geometry)])
+
+		# Foot
+		foot_pose = etree.Element('pose')
+		foot_collision = etree.Element('collision', name=name + "F_col")
+		foot_geometry = etree.Element('geometry')
+		if self.gazebo:
+			foot_sphere = etree.Element('sphere')
+			foot_radius = etree.Element('radius')
+		else:
+			foot_sphere = etree.Element('cylinder', radius=str(foot_r))
+		foot_surface = etree.Element("surface")
+		foot_friction = etree.Element("friction")
+		foot_ode = etree.Element("ode")
+		foot_mu1 = etree.Element("mu")
+		foot_mu2 = etree.Element("mu2")
+
+		foot_visual = etree.Element('visual', name=name + "F_vis")
+		foot_material = etree.Element('material')
+		foot_ambient = etree.Element('ambient')
+		foot_diffuse = etree.Element('diffuse')
+		foot_specular = etree.Element('specular')
+		foot_emissive = etree.Element('emissive')
+
+		foot_pose.text = " 0 0 " + str((-g)) + " 0 0 0"
+		foot_mu1.text = str(mu1)
+		foot_mu2.text = str(mu2)
+		foot_ambient.text = self.green
+		foot_diffuse.text = self.green
+		foot_specular.text = self.green
+		foot_emissive.text = self.black
+		if self.gazebo:
+			foot_radius.text = str(foot_r)
+			foot_sphere.extend([foot_radius])
+
+		foot_ode.extend([foot_mu1, foot_mu2])
+		foot_friction.extend([foot_ode])
+		foot_surface.extend([foot_friction])
+		foot_geometry.extend([foot_sphere])
+		foot_material.extend([foot_ambient, foot_diffuse, foot_specular, foot_emissive])
+		foot_visual.extend([copy(foot_pose), foot_geometry, foot_material])
+		foot_collision.extend([copy(foot_pose), copy(foot_geometry), copy(foot_surface)])
+
+		leg_down.extend([pose, tibia_inertial, tibia_collision, tibia_visual, foot_collision, foot_visual])
 
 		# Joint
-		joint = etree.Element("joint", name=name + "J", type="fixed")
+		joint = etree.Element("joint", name=name + "J", type="revolute")
 		j_parent = etree.Element("parent")
 		j_child = etree.Element("child")
 		j_axis = etree.Element("axis")
@@ -845,16 +888,16 @@ class SDFileGenerator():
 		j_xyz.text = "1 0 0"
 		j_damping.text = str(damp)
 		j_spring_stiffness.text = str(k_spring * g * math.acos((e**2 + g**2 - f**2) / (2 * e * g)))
-		j_lower.text = str(- self.spring_compression_tolerance)
+		j_lower.text = str(- compression_tol)
 		j_upper.text = str(math.pi/2)
 
 		j_dynamics.extend([j_damping, j_spring_stiffness])
 		j_limit.extend([j_lower, j_upper])
-		j_axis.extend([j_xyz, j_dynamics, j_limit])		
+		j_axis.extend([j_xyz, j_dynamics])		
 		joint.extend([j_parent, j_child, j_axis])
 		self.joints_array.append(joint)
 
-		return tibia
+		return leg_down
  
 	def generate_xml_links_and_joints(self):
 		""" Generate the XML for the model links and joints"""
@@ -947,27 +990,29 @@ if __name__ == '__main__':
 
 	# MODEL PARAMETERS
 	model_config = {
+		'default_height': 17,
+		'default_density': 1,
 		'body': {
 			'front': {
 				'width': 14,
 				'height': 3,
 				'length': 8,
-				'mass': 0.179,
+				'mass': 2500,
 			},
 			'middle': {
 				'width': 5,
 				'height': 0.25,
 				'length': 8,
-				'mass': 0.030,
+				'mass': 300,
 			},
 			'hind': {
 				'width': 9,
 				'height': 2.5,
 				'length': 6,
-				'mass': 0.179,
+				'mass': 1500,
 			},		
 		},
-		'battery_weight': 0.117,
+		'battery_mass': 1170,
 		'legs': {
 			'FL': {
 				'motor': {
@@ -975,7 +1020,15 @@ if __name__ == '__main__':
 					'length': 3.6,
 					'height': 5.06,
 					'leg_attachment_height': 3.3,
+					'mass': 670
 				},
+				'foot': {
+					'radius': 0.6,
+					'mu1': 1,
+					'mu2': 1,
+				},
+				'radius': 0.4,
+				'joint_slack': 0.5,
 				'position': 'front',
 				'femur_length': 7,
 				'femur_angle': 25,
@@ -986,6 +1039,7 @@ if __name__ == '__main__':
 				'hip_damping': 0.2,
 				'knee_damping': 0.2,
 				'spring_stiffness': 500,
+				'spring_comp_tol': 0.1,
 				'actuator_kp': 254,
 			},
 			'FR': {
@@ -994,7 +1048,15 @@ if __name__ == '__main__':
 					'length': 3.6,
 					'height': 5.06,
 					'leg_attachment_height': 3.3,
+					'mass': 670
 				},
+				'foot': {
+					'radius': 0.6,
+					'mu1': 1,
+					'mu2': 1,
+				},
+				'radius': 0.4,
+				'joint_slack': 0.5,
 				'position': 'front',
 				'femur_length': 7,
 				'femur_angle': 25,
@@ -1005,6 +1067,7 @@ if __name__ == '__main__':
 				'hip_damping': 0.2,
 				'knee_damping': 0.2,
 				'spring_stiffness': 500,
+				'spring_comp_tol': 0.1,
 				'actuator_kp': 254,
 			},
 			'BL': {
@@ -1013,10 +1076,18 @@ if __name__ == '__main__':
 					'length': 3.6,
 					'height': 5.06,
 					'leg_attachment_height': 3.3,
+					'mass': 670
 				},
+				'foot': {
+					'radius': 0.6,
+					'mu1': 1,
+					'mu2': 1,
+				},
+				'radius': 0.4,
+				'joint_slack': 0.5,
 				'position': 'back',
 				'femur_length': 7,
-				'femur_angle': 0,
+				'femur_angle': 25,
 				'tibia_length': 8.5,
 				'spring_length': 2.5,
 				'femur_spring_tibia_joint_dst': 4.5,
@@ -1024,6 +1095,7 @@ if __name__ == '__main__':
 				'hip_damping': 0.2,
 				'knee_damping': 0.2,
 				'spring_stiffness': 500,
+				'spring_comp_tol': 0.1,
 				'actuator_kp': 254,
 			},
 			'BR': {
@@ -1032,10 +1104,18 @@ if __name__ == '__main__':
 					'length': 3.6,
 					'height': 5.06,
 					'leg_attachment_height': 3.3,
+					'mass': 670
 				},
+				'foot': {
+					'radius': 0.6,
+					'mu1': 1,
+					'mu2': 1,
+				},
+				'radius': 0.4,
+				'joint_slack': 0.5,
 				'position': 'back',
 				'femur_length': 7,
-				'femur_angle': 0,
+				'femur_angle': 25,
 				'tibia_length': 8.5,
 				'spring_length': 2.5,
 				'femur_spring_tibia_joint_dst': 4.5,
@@ -1043,6 +1123,7 @@ if __name__ == '__main__':
 				'hip_damping': 0.2,
 				'knee_damping': 0.2,
 				'spring_stiffness': 500,
+				'spring_comp_tol': 0.1,
 				'actuator_kp': 254,
 			},
 		},
@@ -1050,6 +1131,7 @@ if __name__ == '__main__':
 
 	folder = "../data/robots/"
 	gazebo_folder = "/home/gabs48/.gazebo/models/tigrillo/"
+	gazebo_folder_small = "/home/gabs48/.gazebo/models/tigrillo_small/"
 
 	# Generate the model as an MJCF file
 	fg = MJCFileGenerator(model_config, folder + "tigrillo.mjcf")
@@ -1060,5 +1142,9 @@ if __name__ == '__main__':
 	fg2.generate()
 
 	# Generate the model as a SDF file
-	fg3 = SDFileGenerator(model_config, gazebo_folder + "model.sdf", gazebo=True)
+	fg3 = SDFileGenerator(model_config, gazebo_folder + "model.sdf", model_scale=10, gazebo=True)
 	fg3.generate()
+	
+	# Generate the small model as a SDF file
+	fg4 = SDFileGenerator(model_config, gazebo_folder_small + "model.sdf", model_scale=100, gazebo=True)
+	fg4.generate()
