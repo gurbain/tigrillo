@@ -14,7 +14,7 @@ tigrillo/other/deprecated/*
 
 # Pip files
 *.egg-info/*
-dist/*
+dist
 
 # Other
 *.user
