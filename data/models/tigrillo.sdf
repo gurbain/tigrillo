@@ -1,0 +1,722 @@
+<sdf version="1.4">
+  <world name="default">
+    <model name="tigrillo">
+      <static>False</static>
+      <self_collide>False</self_collide>
+      <link name="body_front">
+        <pose>0 8.0 18.5 0 0 0</pose>
+        <inertial>
+          <mass>2500.0</mass>
+          <inertia>
+            <ixx>15208.333333333334</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>42708.333333333336</iyy>
+            <iyz>0</iyz>
+            <izz>54166.66666666667</izz>
+          </inertia>
+        </inertial>
+        <collision name="body_frontcol">
+          <geometry>
+            <box>
+              <size>14.0 8.0 3.0</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="body_frontvis">
+          <geometry>
+            <box>
+              <size>14.0 8.0 3.0</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
+            <specular>1 0 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="body_middle">
+        <pose>0 0 17.125 0 0 0</pose>
+        <inertial>
+          <mass>300.0</mass>
+          <inertia>
+            <ixx>1601.5625</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>626.5625</iyy>
+            <iyz>0</iyz>
+            <izz>2225.0</izz>
+          </inertia>
+        </inertial>
+        <collision name="body_middlecol">
+          <geometry>
+            <box>
+              <size>5.0 8.0 0.25</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="body_middlevis">
+          <geometry>
+            <box>
+              <size>5.0 8.0 0.25</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+            <specular>0 0 1 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="body_hind">
+        <pose>0 -7.0 18.25 0 0 0</pose>
+        <inertial>
+          <mass>1500.0</mass>
+          <inertia>
+            <ixx>5281.25</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>10906.25</iyy>
+            <iyz>0</iyz>
+            <izz>14625.0</izz>
+          </inertia>
+        </inertial>
+        <collision name="body_hindcol">
+          <geometry>
+            <box>
+              <size>9.0 6.0 2.5</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="body_hindvis">
+          <geometry>
+            <box>
+              <size>9.0 6.0 2.5</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 0 0 1</ambient>
+            <diffuse>1 0 0 1</diffuse>
+            <specular>1 0 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="FRM">
+        <pose>5.2 8.0 14.47 0 0 0</pose>
+        <inertial>
+          <mass>670.0</mass>
+          <inertia>
+            <ixx>2153.134333333333</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>2153.134333333333</iyy>
+            <iyz>0</iyz>
+            <izz>1447.2</izz>
+          </inertia>
+        </inertial>
+        <collision name="FRM_col">
+          <geometry>
+            <box>
+              <size>3.6 3.6 5.06</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="FRM_vis">
+          <geometry>
+            <box>
+              <size>3.6 3.6 5.06</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="FRU">
+        <pose>7.9 8.0 13.7 0.4363323129985824 0 0</pose>
+        <inertial>
+          <pose>0 0 -3.5 0 0 0</pose>
+          <mass>3.518583772020569</mass>
+          <inertia>
+            <ixx>14.508293753298144</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>14.508293753298144</iyy>
+            <iyz>0</iyz>
+            <izz>0.2814867017616456</izz>
+          </inertia>
+        </inertial>
+        <collision name="FRU_col">
+          <pose>0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder length="7.0" radius="0.4"/>
+          </geometry>
+        </collision>
+        <visual name="FRU_vis">
+          <pose>0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder length="7.0" radius="0.4"/>
+          </geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+            <specular>0 0 1 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="FRD">
+        <pose>7.9 10.958327832184896 7.35584549074345 1.0220178564557332 0 0</pose>
+        <inertial>
+          <pose>0 0 0.75 0 0 0</pose>
+          <mass>4.272566008882119</mass>
+          <inertia>
+            <ixx>25.895310485499714</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>25.895310485499714</iyy>
+            <iyz>0</iyz>
+            <izz>0.3418052807105696</izz>
+          </inertia>
+        </inertial>
+        <collision name="FRDT_col">
+          <pose>0 0 0.75 0 0 0</pose>
+          <geometry>
+            <cylinder length="8.5" radius="0.4"/>
+          </geometry>
+        </collision>
+        <visual name="FRDT_vis">
+          <pose>0 0 0.75 0 0 0</pose>
+          <geometry>
+            <cylinder length="8.5" radius="0.4"/>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+        <collision name="FRDF_col">
+          <pose> 0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder radius="0.6"/>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="FRDF_vis">
+          <pose> 0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder radius="0.6"/>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="FLM">
+        <pose>-5.2 8.0 14.47 0 0 0</pose>
+        <inertial>
+          <mass>670.0</mass>
+          <inertia>
+            <ixx>2153.134333333333</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>2153.134333333333</iyy>
+            <iyz>0</iyz>
+            <izz>1447.2</izz>
+          </inertia>
+        </inertial>
+        <collision name="FLM_col">
+          <geometry>
+            <box>
+              <size>3.6 3.6 5.06</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="FLM_vis">
+          <geometry>
+            <box>
+              <size>3.6 3.6 5.06</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="FLU">
+        <pose>-7.9 8.0 13.7 0.4363323129985824 0 0</pose>
+        <inertial>
+          <pose>0 0 -3.5 0 0 0</pose>
+          <mass>3.518583772020569</mass>
+          <inertia>
+            <ixx>14.508293753298144</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>14.508293753298144</iyy>
+            <iyz>0</iyz>
+            <izz>0.2814867017616456</izz>
+          </inertia>
+        </inertial>
+        <collision name="FLU_col">
+          <pose>0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder length="7.0" radius="0.4"/>
+          </geometry>
+        </collision>
+        <visual name="FLU_vis">
+          <pose>0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder length="7.0" radius="0.4"/>
+          </geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+            <specular>0 0 1 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="FLD">
+        <pose>-7.9 10.958327832184896 7.35584549074345 1.0220178564557332 0 0</pose>
+        <inertial>
+          <pose>0 0 0.75 0 0 0</pose>
+          <mass>4.272566008882119</mass>
+          <inertia>
+            <ixx>25.895310485499714</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>25.895310485499714</iyy>
+            <iyz>0</iyz>
+            <izz>0.3418052807105696</izz>
+          </inertia>
+        </inertial>
+        <collision name="FLDT_col">
+          <pose>0 0 0.75 0 0 0</pose>
+          <geometry>
+            <cylinder length="8.5" radius="0.4"/>
+          </geometry>
+        </collision>
+        <visual name="FLDT_vis">
+          <pose>0 0 0.75 0 0 0</pose>
+          <geometry>
+            <cylinder length="8.5" radius="0.4"/>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+        <collision name="FLDF_col">
+          <pose> 0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder radius="0.6"/>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="FLDF_vis">
+          <pose> 0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder radius="0.6"/>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="BRM">
+        <pose>2.7 -7.0 14.47 0 0 0</pose>
+        <inertial>
+          <mass>670.0</mass>
+          <inertia>
+            <ixx>2153.134333333333</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>2153.134333333333</iyy>
+            <iyz>0</iyz>
+            <izz>1447.2</izz>
+          </inertia>
+        </inertial>
+        <collision name="BRM_col">
+          <geometry>
+            <box>
+              <size>3.6 3.6 5.06</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="BRM_vis">
+          <geometry>
+            <box>
+              <size>3.6 3.6 5.06</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="BRU">
+        <pose>5.4 -7.0 13.7 0.4363323129985824 0 0</pose>
+        <inertial>
+          <pose>0 0 -3.5 0 0 0</pose>
+          <mass>3.518583772020569</mass>
+          <inertia>
+            <ixx>14.508293753298144</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>14.508293753298144</iyy>
+            <iyz>0</iyz>
+            <izz>0.2814867017616456</izz>
+          </inertia>
+        </inertial>
+        <collision name="BRU_col">
+          <pose>0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder length="7.0" radius="0.4"/>
+          </geometry>
+        </collision>
+        <visual name="BRU_vis">
+          <pose>0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder length="7.0" radius="0.4"/>
+          </geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+            <specular>0 0 1 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="BRD">
+        <pose>5.4 -4.041672167815104 7.35584549074345 1.0220178564557332 0 0</pose>
+        <inertial>
+          <pose>0 0 0.75 0 0 0</pose>
+          <mass>4.272566008882119</mass>
+          <inertia>
+            <ixx>25.895310485499714</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>25.895310485499714</iyy>
+            <iyz>0</iyz>
+            <izz>0.3418052807105696</izz>
+          </inertia>
+        </inertial>
+        <collision name="BRDT_col">
+          <pose>0 0 0.75 0 0 0</pose>
+          <geometry>
+            <cylinder length="8.5" radius="0.4"/>
+          </geometry>
+        </collision>
+        <visual name="BRDT_vis">
+          <pose>0 0 0.75 0 0 0</pose>
+          <geometry>
+            <cylinder length="8.5" radius="0.4"/>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+        <collision name="BRDF_col">
+          <pose> 0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder radius="0.6"/>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="BRDF_vis">
+          <pose> 0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder radius="0.6"/>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="BLM">
+        <pose>-2.7 -7.0 14.47 0 0 0</pose>
+        <inertial>
+          <mass>670.0</mass>
+          <inertia>
+            <ixx>2153.134333333333</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>2153.134333333333</iyy>
+            <iyz>0</iyz>
+            <izz>1447.2</izz>
+          </inertia>
+        </inertial>
+        <collision name="BLM_col">
+          <geometry>
+            <box>
+              <size>3.6 3.6 5.06</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="BLM_vis">
+          <geometry>
+            <box>
+              <size>3.6 3.6 5.06</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="BLU">
+        <pose>-5.4 -7.0 13.7 0.4363323129985824 0 0</pose>
+        <inertial>
+          <pose>0 0 -3.5 0 0 0</pose>
+          <mass>3.518583772020569</mass>
+          <inertia>
+            <ixx>14.508293753298144</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>14.508293753298144</iyy>
+            <iyz>0</iyz>
+            <izz>0.2814867017616456</izz>
+          </inertia>
+        </inertial>
+        <collision name="BLU_col">
+          <pose>0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder length="7.0" radius="0.4"/>
+          </geometry>
+        </collision>
+        <visual name="BLU_vis">
+          <pose>0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder length="7.0" radius="0.4"/>
+          </geometry>
+          <material>
+            <ambient>0 0 1 1</ambient>
+            <diffuse>0 0 1 1</diffuse>
+            <specular>0 0 1 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <link name="BLD">
+        <pose>-5.4 -4.041672167815104 7.35584549074345 1.0220178564557332 0 0</pose>
+        <inertial>
+          <pose>0 0 0.75 0 0 0</pose>
+          <mass>4.272566008882119</mass>
+          <inertia>
+            <ixx>25.895310485499714</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>25.895310485499714</iyy>
+            <iyz>0</iyz>
+            <izz>0.3418052807105696</izz>
+          </inertia>
+        </inertial>
+        <collision name="BLDT_col">
+          <pose>0 0 0.75 0 0 0</pose>
+          <geometry>
+            <cylinder length="8.5" radius="0.4"/>
+          </geometry>
+        </collision>
+        <visual name="BLDT_vis">
+          <pose>0 0 0.75 0 0 0</pose>
+          <geometry>
+            <cylinder length="8.5" radius="0.4"/>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+        <collision name="BLDF_col">
+          <pose> 0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder radius="0.6"/>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>1</mu>
+                <mu2>1</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="BLDF_vis">
+          <pose> 0 0 -3.5 0 0 0</pose>
+          <geometry>
+            <cylinder radius="0.6"/>
+          </geometry>
+          <material>
+            <ambient>0 1 0 1</ambient>
+            <diffuse>0 1 0 1</diffuse>
+            <specular>0 1 0 1</specular>
+            <emissive>0 0 0 0</emissive>
+          </material>
+        </visual>
+      </link>
+      <joint name="body_front_J" type="fixed">
+        <parent>body_middle</parent>
+        <child>body_front</child>
+      </joint>
+      <joint name="body_hind_J" type="fixed">
+        <parent>body_middle</parent>
+        <child>body_hind</child>
+      </joint>
+      <joint name="FRMJ" type="fixed">
+        <parent>body_front</parent>
+        <child>FRM</child>
+      </joint>
+      <joint name="FRUJ" type="revolute">
+        <parent>FRM</parent>
+        <child>FRU</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <dynamics>
+            <damping>0.2</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name="FRDJ" type="revolute">
+        <parent>FRU</parent>
+        <child>FRD</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <dynamics>
+            <damping>0.2</damping>
+            <spring_stiffness>2924.186558923799</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name="FLMJ" type="fixed">
+        <parent>body_front</parent>
+        <child>FLM</child>
+      </joint>
+      <joint name="FLUJ" type="revolute">
+        <parent>FLM</parent>
+        <child>FLU</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <dynamics>
+            <damping>0.2</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name="FLDJ" type="revolute">
+        <parent>FLU</parent>
+        <child>FLD</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <dynamics>
+            <damping>0.2</damping>
+            <spring_stiffness>2924.186558923799</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name="BRMJ" type="fixed">
+        <parent>body_hind</parent>
+        <child>BRM</child>
+      </joint>
+      <joint name="BRUJ" type="revolute">
+        <parent>BRM</parent>
+        <child>BRU</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <dynamics>
+            <damping>0.2</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name="BRDJ" type="revolute">
+        <parent>BRU</parent>
+        <child>BRD</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <dynamics>
+            <damping>0.2</damping>
+            <spring_stiffness>2924.186558923799</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name="BLMJ" type="fixed">
+        <parent>body_hind</parent>
+        <child>BLM</child>
+      </joint>
+      <joint name="BLUJ" type="revolute">
+        <parent>BLM</parent>
+        <child>BLU</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <dynamics>
+            <damping>0.2</damping>
+          </dynamics>
+        </axis>
+      </joint>
+      <joint name="BLDJ" type="revolute">
+        <parent>BLU</parent>
+        <child>BLD</child>
+        <axis>
+          <xyz>1 0 0</xyz>
+          <dynamics>
+            <damping>0.2</damping>
+            <spring_stiffness>2924.186558923799</spring_stiffness>
+          </dynamics>
+        </axis>
+      </joint>
+    </model>
+  </world>
+</sdf>

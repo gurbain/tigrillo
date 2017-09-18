@@ -1,0 +1,132 @@
+<mujoco model="quadruped">
+  <compiler angle="degree" coordinate="global" inertiafromgeom="true"/>
+  <option gravity="0 0 -98.1"/>
+  <default>
+    <geom density="1" rgba=".9 .7 .1 1" size="0.05"/>
+    <site rgba=".9 .9 .9 1" size="0.005" type="sphere"/>
+    <joint axis="1 0 0" limited="true" range="-100 100" solimplimit="0.95 0.95 0.1" type="hinge"/>
+    <tendon limited="true" range="0.25 1" rgba=".95 .3 .3 1" stiffness="4000" width="0.02"/>
+  </default>
+  <asset>
+    <texture builtin="gradient" height="128" rgb1=".4 .6 .8" rgb2="0 0 0" type="skybox" width="128"/>
+    <texture builtin="flat" height="1278" mark="cross" markrgb="1 1 1" name="texgeom" random="0.01" rgb1="0.8 0.6 0.4" rgb2="0.8 0.6 0.4" type="cube" width="127"/>
+    <texture builtin="checker" height="512" name="texplane" rgb1=".2 .3 .4" rgb2=".1 0.15 0.2" type="2d" width="512"/>
+    <material name="MatPlane" reflectance="0" texrepeat="1 1" texture="texplane" texuniform="true"/>
+    <material name="geom" texture="texgeom" texuniform="true"/>
+  </asset>
+  <worldbody>
+    <geom condim="3" material="MatPlane" name="floor" pos="0 0 0" size="50 50 .125" type="plane"/>
+    <body name="torso">
+      <geom mass="2500.00000" pos="0.00000 -8.00000 12.98238" size="7.00000 4.00000 1.50000" type="box"/>
+      <geom mass="300.00000" pos="0.00000 0.00000 11.60738" size="2.50000 4.00000 0.12500" type="box" name="torso_geom"/>
+      <geom mass="1500.00000" pos="0.00000 7.00000 12.73238" size="4.50000 3.00000 1.25000" type="box"/>
+      <joint limited="false" name="gravity" type="free"/>
+      <site name="sensor_torso" pos="0 0 11.48238"/>
+      <body>
+        <geom mass="0.067" pos="5.20000 -8.00000 8.95238" size="1.80000 1.80000 2.53000" type="box"/>
+        <body>
+          <geom fromto="7.51000 -8.00000 8.18238 7.51000 -10.95833 1.83823" type="capsule"/>
+          <joint damping="0.2" name="shoulder_1" pos="7.51000 -8.00000 8.18238"/>
+          <site name="s1_1" pos="7.51000 -9.05655 5.91661"/>
+          <body>
+            <geom fromto="8.56000 -7.97226 3.66399 8.56000 -15.22414 -0.77000" type="capsule"/>
+            <joint damping="0.2" limited="true" pos="7.51000 -10.95833 1.83823" range="-60 0"/>
+            <site name="s1_2" pos="8.56000 -7.97226 3.66399"/>
+            <body pos="8.56000 -15.22414 -0.77000">
+              <geom friction="1 0.005 0.0001" fromto="8.56000 -15.22414 -0.77000 8.56000 -15.42414 -1.17000" type="capsule"/>
+              <site name="sensor_1" pos="8.56000 -15.22414 -0.77000"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body>
+        <geom mass="0.067" pos="-5.20000 -8.00000 8.95238" size="1.80000 1.80000 2.53000" type="box"/>
+        <body>
+          <geom fromto="-7.51000 -8.00000 8.18238 -7.51000 -10.95833 1.83823" type="capsule"/>
+          <joint damping="0.2" name="shoulder_2" pos="-7.51000 -8.00000 8.18238"/>
+          <site name="s2_1" pos="-7.51000 -9.05655 5.91661"/>
+          <body>
+            <geom fromto="-8.56000 -7.97226 3.66399 -8.56000 -15.22414 -0.77000" type="capsule"/>
+            <joint damping="0.2" limited="true" pos="-7.51000 -10.95833 1.83823" range="-60 0"/>
+            <site name="s2_2" pos="-8.56000 -7.97226 3.66399"/>
+            <body pos="-8.56000 -15.22414 -0.77000">
+              <geom friction="1 0.005 0.0001" fromto="-8.56000 -15.22414 -0.77000 -8.56000 -15.42414 -1.17000" type="capsule"/>
+              <site name="sensor_2" pos="-8.56000 -15.22414 -0.77000"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body>
+        <geom mass="0.067" pos="2.70000 7.00000 8.95238" size="1.80000 1.80000 2.53000" type="box"/>
+        <body>
+          <geom fromto="5.01000 7.00000 8.18238 5.01000 4.04167 1.83823" type="capsule"/>
+          <joint damping="0.2" name="shoulder_3" pos="5.01000 7.00000 8.18238"/>
+          <site name="s3_1" pos="5.01000 5.94345 5.91661"/>
+          <body>
+            <geom fromto="6.06000 7.02774 3.66399 6.06000 -0.22414 -0.77000" type="capsule"/>
+            <joint damping="0.2" limited="true" pos="5.01000 4.04167 1.83823" range="-60 0"/>
+            <site name="s3_2" pos="6.06000 7.02774 3.66399"/>
+            <body pos="6.06000 -0.22414 -0.77000">
+              <geom friction="1 0.005 0.0001" fromto="6.06000 -0.22414 -0.77000 6.06000 -0.42414 -1.17000" type="capsule"/>
+              <site name="sensor_3" pos="6.06000 -0.22414 -0.77000"/>
+            </body>
+          </body>
+        </body>
+      </body>
+      <body>
+        <geom mass="0.067" pos="-2.70000 7.00000 8.95238" size="1.80000 1.80000 2.53000" type="box"/>
+        <body>
+          <geom fromto="-5.01000 7.00000 8.18238 -5.01000 4.04167 1.83823" type="capsule"/>
+          <joint damping="0.2" name="shoulder_4" pos="-5.01000 7.00000 8.18238"/>
+          <site name="s4_1" pos="-5.01000 5.94345 5.91661"/>
+          <body>
+            <geom fromto="-6.06000 7.02774 3.66399 -6.06000 -0.22414 -0.77000" type="capsule"/>
+            <joint damping="0.2" limited="true" pos="-5.01000 4.04167 1.83823" range="-60 0"/>
+            <site name="s4_2" pos="-6.06000 7.02774 3.66399"/>
+            <body pos="-6.06000 -0.22414 -0.77000">
+              <geom friction="1 0.005 0.0001" fromto="-6.06000 -0.22414 -0.77000 -6.06000 -0.42414 -1.17000" type="capsule"/>
+              <site name="sensor_4" pos="-6.06000 -0.22414 -0.77000"/>
+            </body>
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <tendon>
+    <spatial range="0.27115 2.71155" stiffness="500">
+      <site site="s1_1"/>
+      <site site="s1_2"/>
+    </spatial>
+  </tendon>
+  <tendon>
+    <spatial range="0.27115 2.71155" stiffness="500">
+      <site site="s2_1"/>
+      <site site="s2_2"/>
+    </spatial>
+  </tendon>
+  <tendon>
+    <spatial range="0.27115 2.71155" stiffness="500">
+      <site site="s3_1"/>
+      <site site="s3_2"/>
+    </spatial>
+  </tendon>
+  <tendon>
+    <spatial range="0.27115 2.71155" stiffness="500">
+      <site site="s4_1"/>
+      <site site="s4_2"/>
+    </spatial>
+  </tendon>
+  <actuator>
+    <position forcelimited="true" forcerange="-50 50" gear="1" joint="shoulder_1" kp="254"/>
+    <position forcelimited="true" forcerange="-50 50" gear="1" joint="shoulder_2" kp="254"/>
+    <position forcelimited="true" forcerange="-50 50" gear="1" joint="shoulder_3" kp="254"/>
+    <position forcelimited="true" forcerange="-50 50" gear="1" joint="shoulder_4" kp="254"/>
+  </actuator>
+  <sensor>
+    <force site="sensor_1"/>
+    <force site="sensor_2"/>
+    <force site="sensor_3"/>
+    <force site="sensor_4"/>
+    <accelerometer site="sensor_torso"/>
+  </sensor>
+</mujoco>

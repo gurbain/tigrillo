@@ -1,18 +1,23 @@
 # build folder
 build/*
 
-# Useless data
-data/logs/*
-data/results/*
+# Useless results
+results/*
 data/meshes/*
 *.png
 
 # deprecated folders
-tests/*
+tigrillo/other/deprecated/*
 
 # All compiled python scripts
 *.pyc
 
+# Pip files
+*.egg-info/*
+dist/*
+
 # Other
 *.user
 *.directory
+*.idea
+
