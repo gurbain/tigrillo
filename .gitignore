@@ -21,3 +21,5 @@ dist/*
 *.directory
 *.idea
 
+# Development milestones
+TODO
