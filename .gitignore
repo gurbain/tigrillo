@@ -14,7 +14,7 @@ tigrillo/other/deprecated/*
 
 # Pip files
 *.egg-info/*
-dist
+dist/*
 
 # Other
 *.user
@@ -22,4 +22,4 @@ dist
 *.idea
 
 # Development milestones
-TODO
+TODO*
