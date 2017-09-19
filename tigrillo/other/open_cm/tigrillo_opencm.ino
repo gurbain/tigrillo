@@ -22,7 +22,7 @@
 #define BAUDRATE_1MB 3
 #define MAX_ARG_SIZE 100
 #define MIN_SENS_READ_TIME 2000
-#define DEF_SENS_READ_TIME 10000
+#define DEF_SENS_READ_TIME 5000 # T=5ms or f=200Hz 
 
 #define ACT_NUM 4
 #define SENS_NUM 4
