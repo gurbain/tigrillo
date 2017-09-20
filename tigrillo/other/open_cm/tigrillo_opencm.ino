@@ -25,7 +25,7 @@
 
 #define SERVO_MIN_LIM 200
 #define SERVO_MAX_LIM 820
-#define SERVO_RANGE 1000
+#define SERVO_RANGE 180
 #define ACT_NUM 4
 #define ACT_ID_FL 1
 #define ACT_ID_FR 2
