@@ -19,21 +19,26 @@
 // Defines
 #define UART_3 3
 #define TIMER_1 1
-#define BAUDRATE_1MB 3
 #define MAX_ARG_SIZE 100
-#define MIN_SENS_READ_TIME 2000
-#define DEF_SENS_READ_TIME 5000 # T=5ms or f=200Hz 
+#define BAUDRATE_115200 2
+#define BAUDRATE_1MB 3
 
+#define SERVO_MIN_LIM 200
+#define SERVO_MAX_LIM 820
+#define SERVO_RANGE 1000
 #define ACT_NUM 4
+#define ACT_ID_FL 1
+#define ACT_ID_FR 2
+#define ACT_ID_BL 3
+#define ACT_ID_BR 4
+
+#define MIN_SENS_READ_TIME 2000
+#define DEF_SENS_READ_TIME 100000 // T=5ms or f=200Hz
 #define SENS_NUM 4
 #define SENS_PIN_FL 0
 #define SENS_PIN_FR 1
 #define SENS_PIN_BL 2
 #define SENS_PIN_BR 3
-#define ACT_ID_FL 0
-#define ACT_ID_FR 1
-#define ACT_ID_BL 2
-#define ACT_ID_BR 3
 
 #define GOAL_POS_SLACK 30
 
@@ -58,7 +63,7 @@ int bus_mutex = 0;
 void setup() {
 
   // Setup Dynamixel protocol
-  Dxl.begin(BAUDRATE_1MB);
+  Dxl.begin(BAUDRATE_115200);
   Dxl.jointMode(ACT_ID_FL);
   Dxl.jointMode(ACT_ID_FR);
   Dxl.jointMode(ACT_ID_BL);
@@ -221,13 +226,21 @@ void resetSensors(void) {
 
 void updateMotors(int act_leg[]) {
   
-  // Send the new values sequentially to the dynamixel motors
-  Dxl.writeWord(ACT_ID_FL, GOAL_POS_SLACK, act_leg[0]);
-  Dxl.writeWord(ACT_ID_FR, GOAL_POS_SLACK, act_leg[1]);
-  Dxl.writeWord(ACT_ID_BL, GOAL_POS_SLACK, act_leg[2]);
-  Dxl.writeWord(ACT_ID_BR, GOAL_POS_SLACK, act_leg[3]);
+  int mi = SERVO_MIN_LIM;
+  int ma = SERVO_MAX_LIM;
+  int in = SERVO_MAX_LIM - SERVO_MIN_LIM;
+  int ra = SERVO_RANGE;
+  
+  // Right legs
+  Dxl.writeWord(ACT_ID_FR, GOAL_POS_SLACK, (mi + act_leg[ACT_ID_FR-1] * in / ra));
+  Dxl.writeWord(ACT_ID_BR, GOAL_POS_SLACK, (mi + act_leg[ACT_ID_BR-1] * in / ra));
+  
+  // Left legs
+  Dxl.writeWord(ACT_ID_FL, GOAL_POS_SLACK, (ma - act_leg[ACT_ID_FL-1] * in / ra));
+  Dxl.writeWord(ACT_ID_BL, GOAL_POS_SLACK, (ma - act_leg[ACT_ID_BL-1] * in / ra));
 
 }
+
 
 
 int changePeriod(int period) {
