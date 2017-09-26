@@ -34,13 +34,19 @@ class Controller(object):
         # Retrieve the config
         self.config = configuration
         self.log = logging.getLogger('Controller')
-        params = config["Controller"]
+        params = configuration["Controller"]
 
         if "file" in params:
             self.load(params["file"])
         else:
             if "params" in params:
-                self.params = ast.literal_eval(params["params"])
+                if type(params["params"]) == str:
+                    self.params = ast.literal_eval(params["params"])
+                if type(params["params"]) == (np.ndarray or list):
+                    self.params = params["params"]
+                else:
+                    print type(params["params"])
+                    self.params = dict()
             else:
                 self.params = dict()
 
@@ -233,7 +239,7 @@ class CPG(Controller):
 
         self.n_motors = 4
 
-        self.r = [float(self.params[i]["mu"]) for i in range(self.n_motors)]
+        self.r = [1 for _ in range(self.n_motors)]
         self.phi = [np.pi * float(self.params[i]["duty_factor"]) for i in range(self.n_motors)]
         self.o = [float(self.params[i]["o"]) for i in range(self.n_motors)]
 
@@ -245,15 +251,16 @@ class CPG(Controller):
         self.f_o = [0] * 4
 
         self.dt = float(self.config["Controller"]["integ_time"])
-        self.gamma = 0.01
-        self.prev_t= -1
+        self.gamma = 0.1
+        self.prev_t = -1
 
         self.coupling = [self.params[i]["coupling"] for i in range(self.n_motors)]
-        a, b = float(self.params[1]["phase_offset"]), float(self.params[2]["phase_offset"])
+        a = float(self.params[1]["phase_offset"])
+        b = float(self.params[2]["phase_offset"])
         c = float(self.params[3]["phase_offset"])
-        d = a-b
-        e = a-c
-        f = b-c
+        d = a - b
+        e = a - c
+        f = b - c
         self.psi = [[0, a, b, c],
                     [-1*a, 0, d, e],
                     [-1*b, -1*d, 0, f],
@@ -319,6 +326,11 @@ class CPG(Controller):
         self.t = t
         n_steps = (int(self.t/self.dt) - self.prev_t)
         cmd = []
+        if n_steps == 0:
+            n_steps = 1
+            self.log.error("Controller time step (" + str((self.t - self.prev_t)*1000) +
+                           "ms) is too low for numerical integration (dt = " + str(self.dt*1000) + " ms). " +
+                           "Truncating control signal to avoid stopping software!")
 
         for _ in range(n_steps):
             cmd = self.step_cpg()

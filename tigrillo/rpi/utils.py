@@ -4,9 +4,9 @@
 This file contains all other methods
 """
 
+import ast
 from collections import deque
 import os
-import re
 import serial
 import threading
 import time
@@ -28,84 +28,114 @@ DATA_FOLDER = "results"
 
 
 def timestamp():
-	""" Return a string stamp with current date and time """
+    """ Return a string stamp with current date and time """
 
-	return time.strftime("%Y%m%d-%H%M%S", time.localtime())
+    return time.strftime("%Y%m%d-%H%M%S", time.localtime())
 
 
 def make_dir(dir):
-	""" Create the father directory of a filename if it does not exists """
+    """ Create the father directory of a filename if it does not exists """
 
-	if not os.path.exists(dir):
-		os.makedirs(dir)
+    if not os.path.exists(dir):
+        os.makedirs(dir)
 
 
 class UARTDaemon(threading.Thread):
-	"""
-	This UART daemon monitors the use of a serial IO channel and store all receeeived
-	data in a buffer for asynchronous usage
-	"""
+    """
+    This UART daemon monitors the use of a serial IO channel and store all receeeived
+    data in a buffer for asynchronous usage
+    """
 
-	def __init__(self, port, baud):
+    def __init__(self, port, baud):
 
-		super(UARTDaemon, self).__init__()
+        super(UARTDaemon, self).__init__()
 
-		self.port = port
-		self.baud = baud
-		self.conn = None
+        self.port = port
+        self.baud = baud
+        self.conn = None
 
-		self.data_buffer = deque([])
-		self.ack_buffer = deque([])
+        self.data_buffer = deque([])
+        self.ack_buffer = deque([])
 
-		self.stop = True
-		self.read_period = 0.0001
-		self.daemon = True
+        self.stop = True
+        self.read_period = 0.0001
+        self.daemon = True
 
-	def start(self):
-		""" Initialize and configure serial port """
+    def start(self):
+        """ Initialize and configure serial port """
 
-		self.conn = serial.Serial(self.port, self.baud)
-		if not self.conn.isOpen():
-			self.conn.open()
-		self.stop = False
+        self.conn = serial.Serial(self.port, self.baud)
+        if not self.conn.isOpen():
+            self.conn.open()
+        self.stop = False
 
-		super(UARTDaemon, self).start()
+        super(UARTDaemon, self).start()
 
-	def stop(self):
-		""" Raise a stop flag to stop the daemon """
+    def stop(self):
+        """ Raise a stop flag to stop the daemon """
 
-		self.stop = True
-		self.conn.close()
+        self.stop = True
+        self.conn.close()
 
-	def readData(self):
-		""" Read the last data line in the uart buffer """
+    def _add_data(self, data):
+        """ Add a data line in the uart buffer """
 
-		if self.data_buffer:
-			return self.data_buffer.popleft()
+        if "Previous Time Stamp" and "Time Stamp" and "End of Reading Time Stamp" in data:
+            ts = float(data["Time Stamp"]) / 1000000
+            eor = float(data["End of Reading Time Stamp"]) / 1000000
+            pts = float(data["Previous Time Stamp"]) / 1000000
+            data["UART IO Time"] = eor - ts
+            data["UART Time Stamp"] = ts
+            data["UART Loop Time"] = ts - pts
+            del data["End of Reading Time Stamp"]
+            del data["Previous Time Stamp"]
+            del data["Time Stamp"]
 
-	def readAck(self):
-		""" Read the last ack line in the uart buffer """
+        self.data_buffer.append(data)
+        if len(self.data_buffer) > MAX_BUFFER_SIZE:
+            self.data_buffer.popleft()
 
-		if self.ack_buffer:
-			return self.ack_buffer.popleft()
+    def _add_ack(self, ack):
+        """ Add a ack line in the uart buffer """
 
-	def write(self, line):
-		""" Write a line in the uart channel"""
+        self.ack_buffer.append(ack)
+        print "haha" + str(ack)
+        if len(self.ack_buffer) > MAX_BUFFER_SIZE:
+            self.ack_buffer.popleft()
 
-		self.conn.write(line)
+    def read_data(self):
+        """ Read the last data line in the uart buffer """
 
-	def run(self):
-		""" Read and populate the buffer"""
+        if self.data_buffer:
+            return self.data_buffer.pop()
 
-		while not self.stop:
-			line = self.conn.readline()
-			line_array = filter(None, re.split('; |: |\r|\*|\n', line))
-			# TODO: only update when enough
-			print "bbbb" + str(line_array)
-			if len(line_array) > 0:
-				if line_array[0] == "[DATA]":
-					self.data_buffer.append(line_array[1:])
-				if line_array[0] == "[ACK]":
-					self.data_buffer.append(line_array[1:])
-			time.sleep(self.read_period)
+    def read_ack(self):
+        """ Read the last ack line in the uart buffer """
 
+        if self.ack_buffer:
+            return self.ack_buffer.pop()
+
+    def write(self, line):
+        """ Write a line in the uart channel"""
+
+        self.conn.write(line)
+
+    def run(self):
+        """ Read and populate the buffer"""
+
+        while not self.stop:
+            line = self.conn.readline()
+            dico = dict()
+            try:
+                dico = ast.literal_eval(line)
+            except SyntaxError or ValueError:
+                print("Malformed UART packet. Ignoring!" + line)
+                pass;
+
+            if "DATA" in dico:
+                self._add_data(dico["DATA"])
+                print("Received correct DATA UART packet!")
+            if "ACK" in dico:
+                self._add_ack(dico["ACK"])
+                print("Received correct ACK UART packet!")
+            time.sleep(self.read_period)
