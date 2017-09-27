@@ -21,7 +21,7 @@ __status__ = "Research"
 __date__ = "July 3rd, 2017" 
 
 
-class Analyze:
+class OptimAnalysis:
 
     def __init__(self):
 
@@ -79,7 +79,7 @@ class Analyze:
 
 if __name__ == '__main__':
 
-    an = Analyze()
+    an = OptimAnalysis()
     an.load("/home/gabs48/tigrillo/data/results/20170703-165722/")
 
     an.simulate()

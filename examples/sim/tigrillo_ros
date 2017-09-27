@@ -16,11 +16,11 @@ export ROS_IP=`hostname -I`
 # Run the software with eventual parameters overload
 if [ "$1" = "optim" ];
 then
-	mpirun -np $N_CORES python3 sim.py -c ../data/configs/default_ros_optim.conf "${@:2}"
+	mpirun -np $N_CORES python3 main.py -c ../data/configs/default_ros_optim.conf "${@:2}"
 else
-	python3 sim.py -c ../data/configs/default_ros_run.conf "$@"
+	python3 main.py -c ../data/configs/default_ros_run.conf "$@"
 fi
 
-# Kill any running gazebo instance in case an exception is not taken into account
+# Kill any running gazebo instance (security in case an exception is not taken into account)
 pkill gzserver
 pkill gzclient

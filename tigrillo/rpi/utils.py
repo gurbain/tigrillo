@@ -24,20 +24,6 @@ __date__ = "September 11th, 2017"
 
 
 MAX_BUFFER_SIZE = 100
-DATA_FOLDER = "results"
-
-
-def timestamp():
-    """ Return a string stamp with current date and time """
-
-    return time.strftime("%Y%m%d-%H%M%S", time.localtime())
-
-
-def make_dir(dir):
-    """ Create the father directory of a filename if it does not exists """
-
-    if not os.path.exists(dir):
-        os.makedirs(dir)
 
 
 class UARTDaemon(threading.Thread):

@@ -132,7 +132,7 @@ class Sensors:
         pos_x, pos_y, pos_z, pos_w = self.imu.read_quaternion()
         gyro_x, gyro_y, gyro_z = self.imu.read_gyroscope()
         linacc_x, linacc_y, linacc_z = self.imu.read_linear_acceleration()
-        grav_x, grav_y, grav_z = self.imu.read_gravity()
+        #grav_x, grav_y, grav_z = self.imu.read_gravity()
         imu_read_time = time.time() - imu_timestamp
 
 
@@ -140,7 +140,7 @@ class Sensors:
                    "Position Roll": ori_r, "Position Pitch": ori_p,"Position X": pos_x, "Position Y": pos_y,
                    "Position Z": pos_z, "Position W": pos_w, "Gyroscope X": gyro_x, "Gyroscope Y": gyro_y,
                    "Gyroscope Z": gyro_z, "Linear Acceleration X": linacc_x, "Linear Acceleration Y": linacc_y,
-                   "Gravity Y": grav_y, "Gravity Z": grav_z}
+                   "Linear Acceleration Z": linacc_z, "Gravity Y": grav_y, "Gravity Z": grav_z}
 
         # OpenCM
         opencm_measure = self.uart.read_data()
@@ -235,7 +235,7 @@ class Tigrillo:
         measure = self.sensors.getMeasure()
 
         if self.save_all:
-            measure["Run Time: "] = t_run
+            measure["Run Time"] = t_run
             with open(self.file_s, 'a') as f:
                 w = csv.DictWriter(f, measure.keys())
                 if self.sensors_index == 0:
@@ -251,7 +251,7 @@ class Tigrillo:
         self.actuators.update(update)
 
         if self.save_all:
-            update["Run Time: "] = t_run
+            update["Run Time"] = t_run
             with open(self.file_a, 'a') as f:
                 w = csv.DictWriter(f, update.keys())
                 if self.actuators_index == 0:

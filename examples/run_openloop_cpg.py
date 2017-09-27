@@ -24,9 +24,9 @@ RESULTS_FOLDER = "../results/run/"
 if __name__ == '__main__':
 
     # Create and configure robot (by defaut: save actuators and sensors values)
-    # rob = robot.Tigrillo(data_folder=RESULTS_FOLDER)
-    # rob.start()
-    # rob.set_sensor_period(2)
+    rob = robot.Tigrillo(data_folder=RESULTS_FOLDER)
+    rob.start()
+    rob.set_sensor_period(2)
 
     # Create and configure CPG controller
     config_run = {"Controller":
