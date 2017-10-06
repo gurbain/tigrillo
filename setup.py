@@ -23,9 +23,10 @@ setup(name='tigrillo',
             'mpi4py>=1.3.1',
             'psutil>=3.3.0',
             'pybullet>=1.0.7',
+            "PyYaml",
       ],
       extras_require={
             'pyserial': ['scipy>=3.0.1'],
-            'rospy': ['rospy>=1.12.7'],
+            'rospy': ['rospy>=1.12.7','rospkg', 'catkin_pkg'],
       },
       packages=find_packages())

@@ -34,9 +34,9 @@ if __name__ == '__main__':
                              "'phase_offset': 0, 'coupling': [5,5,5,0]},"
                              "{'mu': 500, 'o': -10, 'omega': 9, 'duty_factor': 0.5, "
                              "'phase_offset': 6.28, 'coupling': [5,5,5,0]},"
-                             "{'mu': 1000, 'o': -15, 'omega': 9, 'duty_factor': 0.95, "
+                             "{'mu': 1000, 'o': -30, 'omega': 9, 'duty_factor': 0.95, "
                              "'phase_offset': 3.14, 'coupling': [5,5,5,0]},"
-                             "{'mu': 1000, 'o': -15, 'omega': 9, 'duty_factor': 0.95, "
+                             "{'mu': 1000, 'o': -30, 'omega': 9, 'duty_factor': 0.95, "
                              "'phase_offset': 3.14, 'coupling': [5,5,5,0]}]",
                    "integ_time": 0.001,
                    "timestep": 0.02,

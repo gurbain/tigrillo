@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # Load a config file from a NRP result
     cpg_params = np.load(NRP_RES_FOLDER + "2017-9-20-23-36-4_tigrillo_scaled_feets_D7N30_it86.npy")
     for a in cpg_params:
-        a["omega"] = a["omega"] * 2
+        a["omega"] = a["omega"]
     config = {"Controller": {"params": cpg_params, "integ_time": 0.001, "timestep": 0.02, "runtime": 40}}
     ctl = CPG(config)
 
@@ -49,8 +49,8 @@ if __name__ == '__main__':
         cmd = ctl.step(t.st)
 
         # Translate command representation (offset of 115 degrees)
-        update = {"FL": cmd[0] + 155, "FR": cmd[1] + 155,
-                  "BL": cmd[2] + 155, "BR": cmd[3] + 155}
+        update = {"FL": cmd[0] + 115, "FR": cmd[1] + 115,
+                  "BL": cmd[2] + 115, "BR": cmd[3] + 115}
 
         # Update to the robot (to save call both actuators and sensors)
         measure = rob.get_last_sensors(t.st)

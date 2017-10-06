@@ -4,7 +4,8 @@ This file contains all methods related to the robot sensors
 """
 
 from imu import BNO055
-from utils import *
+from uart import *
+from tigrillo.core.utils import *
 
 import csv
 
@@ -19,7 +20,7 @@ __status__ = "Research"
 __date__ = "September 11th, 2017"
 
 
-MAX_BUFFER_SIZE = 100
+DATA_FOLDER = "data"
 
 
 class Sensors:
@@ -132,7 +133,7 @@ class Sensors:
         pos_x, pos_y, pos_z, pos_w = self.imu.read_quaternion()
         gyro_x, gyro_y, gyro_z = self.imu.read_gyroscope()
         linacc_x, linacc_y, linacc_z = self.imu.read_linear_acceleration()
-        #grav_x, grav_y, grav_z = self.imu.read_gravity()
+        grav_x, grav_y, grav_z = self.imu.read_gravity()
         imu_read_time = time.time() - imu_timestamp
 
 
@@ -204,7 +205,7 @@ class Tigrillo:
         if save_all:
             if data_folder is None:
                 data_folder = DATA_FOLDER
-            make_dir(data_folder)
+            mkdir(data_folder)
             self.file_s = data_folder + "/sensors_" + timestamp() + ".csv"
             self.file_a = data_folder + "/actuators_" + timestamp() + ".csv"
 
