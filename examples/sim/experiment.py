@@ -6,6 +6,8 @@ running an experimental pipe and saving the results.
 
 import ast
 
+from tigrillo.core.physics import *
+from tigrillo.core.control import *
 from tigrillo.core.utils import *
 from tigrillo.core.optim import *
 
@@ -36,10 +38,11 @@ class Experiment:
 		self.log = logging.getLogger('Experiment')
 
 		# Log all the scope of experiment
+		self.log.info(get_pid_string())
 		self.log.info(get_date_string())
 		self.log.info(get_git_string())
 		self.log.info(get_machine_string())
-		self.log.info(get_gpu_string())
+		# self.log.info(get_gpu_string())
 		self.log.info(get_os_string())
 		self.log.info(get_python_string())
 		self.log.info(get_config_string(self.config))
@@ -49,6 +52,7 @@ class Experiment:
 		self.sim_time = 0
 		self.phys = None
 		self.cont = None
+		self.optim = None
 
 		# Folder for saving results
 		if "result_folder" in config["Experiment"]:
@@ -82,9 +86,8 @@ class Experiment:
 			self.phys.stop_sim()
 
 		if self.mode == "optim":
-			opt = Optim(self.sim_time, self.phys, self.cont, self.config)
-			params, score, duration = opt.run()
-			opt.save()
+			self.optim = Optim(self.sim_time, self.phys, self.cont, self.config)
+			params, score, duration = self.optim.run()
 			self.cont.set_norm_params(params)
 
 		self.save()
@@ -98,8 +101,11 @@ class Experiment:
 		mkdir(folder)
 
 		# self.phys.save()
-		# save optim params..
-		self.cont.save(folder + "best_cont.pkl")
+		if self.mode == "optim":
+			self.cont.save(folder + "best_cont.pkl")
+			self.optim.save(folder + "cma.csv")
+			self.optim.plot(folder + "cma.png")
+
 		cp(self.config.get("Config", "filename"), folder + "config.conf")
 
 		return

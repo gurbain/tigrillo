@@ -6,7 +6,6 @@ load the configuration file for the simulation.
 """
 
 import argparse
-import configparser
 
 from experiment import *
 from tigrillo.core.utils import *

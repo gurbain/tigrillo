@@ -4,6 +4,7 @@ and bullet are supportedbut bullet should be also soon.
 """
 
 import ast
+import configparser
 import math
 import matplotlib
 matplotlib.use("Agg")
@@ -42,10 +43,9 @@ class Controller(object):
             if "params" in params:
                 if type(params["params"]) == str:
                     self.params = ast.literal_eval(params["params"])
-                if type(params["params"]) == (np.ndarray or list):
+                elif type(params["params"]) == (np.ndarray or list):
                     self.params = params["params"]
                 else:
-                    print type(params["params"])
                     self.params = dict()
             else:
                 self.params = dict()
@@ -128,7 +128,6 @@ class Controller(object):
         """
 
         st = 0
-        rt = 0
 
         try:
 
@@ -141,13 +140,12 @@ class Controller(object):
                     break
 
             while physics.sim_duration < sim_time:
-                rt = time.time() - self.t_init
-                st = physics.sim_duration
-                self.st_time_step = self.time_step*st/rt
 
+                st = physics.sim_duration
                 cmd = self.step(st)
                 physics.set_sim_cmd(cmd)
-                time.sleep(self.st_time_step)
+
+                # Do something for real-time here
 
         except:
             self.log.error("Simulation aborted by user. Physics time: " + str(physics.sim_duration) +
@@ -156,6 +154,7 @@ class Controller(object):
             traceback.print_exc()
             sys.exit()
 
+        rt = time.time() - self.t_init
         self.log.info("Simulation of {0:.2f}s (ST)".format(st) +
                       " finished in {0:.2f}s (RT)".format(rt) +
                       " with acceleration of {0:.3f} x".format(st/rt))
@@ -236,7 +235,7 @@ class CPG(Controller):
     def __init__(self, configuration):
 
         super(CPG, self).__init__(configuration)
-
+        
         self.n_motors = 4
 
         self.r = [1 for _ in range(self.n_motors)]

@@ -2,8 +2,8 @@
 build/*
 
 # Useless results
-results/*
 data/meshes/*
+results/*
 *.png
 
 # deprecated folders

@@ -7,16 +7,15 @@ deformable objects and with python handles
 
 import numpy as np
 import psutil
-import pybullet as p
+# import pybullet as p
 import rospy as ros
 import subprocess
-import time
 
-from utils import *
+from tigrillo.core.utils import *
 
 from rosgraph_msgs.msg import Clock
 from gazebo_msgs.msg import ModelStates
-from std_msgs.msg import Float32MultiArray, MultiArrayLayout
+from std_msgs.msg import Float32MultiArray, MultiArrayLayout, Float64
 
 __author__ = "Gabriel Urbain" 
 __copyright__ = "Copyright 2017, Human Brain Projet, SP10"
@@ -260,7 +259,13 @@ class Gazebo(Physics):
                                             callback=self.__reg_sim_duration, queue_size=1)
             self.sub_state = ros.Subscriber("/gazebo/model_states", ModelStates,
                                             callback=self.__reg_sim_states, queue_size=1)
-            self.pub_legs = ros.Publisher('/tigrillo/legs_cmd', Float32MultiArray, queue_size=1)
+
+            # TO CHANGE
+            self.pub_leg_fl = ros.Publisher('/tigrillo/tigrillo_feet__left_shoulder/cmd_pos', Float64, queue_size=1)
+            self.pub_leg_fr = ros.Publisher('/tigrillo/tigrillo_feet__right_shoulder/cmd_pos', Float64, queue_size=1)
+            self.pub_leg_bl = ros.Publisher('/tigrillo/tigrillo_feet__left_hip/cmd_pos', Float64, queue_size=1)
+            self.pub_leg_br = ros.Publisher('/tigrillo/tigrillo_feet__right_hip/cmd_pos', Float64, queue_size=1)
+            # self.pub_legs = ros.Publisher('/tigrillo/legs_cmd', Float32MultiArray, queue_size=1)
 
         except KeyboardInterrupt:
             self.log.error("Simulation aborted by user before physics can be started correctly")
@@ -313,7 +318,13 @@ class Gazebo(Physics):
 
     def set_sim_cmd(self, cmd):
 
-        self.pub_legs.publish(Float32MultiArray(layout=MultiArrayLayout([], 1), data=cmd))
+        # TO CHANGE
+        if len(cmd) == 4:
+            self.pub_leg_fl.publish(Float64(cmd[0]))
+            self.pub_leg_fr.publish(Float64(cmd[1]))
+            self.pub_leg_bl.publish(Float64(cmd[2]))
+            self.pub_leg_br.publish(Float64(cmd[3]))
+        # self.pub_legs.publish(Float32MultiArray(layout=MultiArrayLayout([], 1), data=cmd))
         return
 
     def start_ros(self):

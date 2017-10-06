@@ -72,6 +72,12 @@ def timestamp():
     return time.strftime("%Y%m%d-%H%M%S", time.localtime())
 
 
+def get_pid_string():
+    """ Return a string with process PID """
+
+    return "PID: " + str(os.getpid())
+
+
 def get_date_string():
     """ Return a string with datetime """
 

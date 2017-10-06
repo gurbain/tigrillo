@@ -2,7 +2,7 @@
 Contains the files for optimization algorithms
 """
 
-import cma
+from tigrillo.core import cma
 
 from copy import deepcopy
 import logging
@@ -110,6 +110,8 @@ class Optim(object):
 
     def run(self):
 
+        # Add constraints here
+
         # Init algorithm
         es = cma.CMAEvolutionStrategy(self.dim * [self.init_mean], self.init_var,
                                       {'boundary_handling': 'BoundTransform ', 'bounds': [0, 1],
@@ -118,7 +120,7 @@ class Optim(object):
         t_init = time.time()
 
         # Run optimization
-        print("== Start Optimization process with dim of " + str(self.dim) +
+        self.log.info("== Start Optimization process with dim of " + str(self.dim) +
               " and population size of " + str(self.pop_size) + " ==\n")
         while not es.stop():
             solutions = es.ask()
@@ -148,7 +150,6 @@ class Optim(object):
         # Run
         self.phys.start_sim()
         self.cont.run(self.sim_time, self.phys)
-
         # Stop
         self.score.stop()
         st = self.score.final_time
@@ -168,7 +169,7 @@ class Optim(object):
 
         return -score
 
-    def save(self):
+    def save(self, filename):
 
         # save here
 
