@@ -36,9 +36,9 @@
 #define DEF_SENS_READ_TIME 100000 // T=5ms or f=200Hz
 #define SENS_NUM 4
 #define SENS_PIN_FL 0
-#define SENS_PIN_FR 1
-#define SENS_PIN_BL 2
-#define SENS_PIN_BR 3
+#define SENS_PIN_FR 3
+#define SENS_PIN_BL 6
+#define SENS_PIN_BR 8
 
 #define GOAL_POS_SLACK 30
 
@@ -81,6 +81,13 @@ void setup() {
   // Setup Interuption for received UART message
   SerialUSB.begin();
   SerialUSB.attachInterrupt(readUART);
+  
+  // Init sensor PINs
+    // Configure the ADC pin
+  pinMode(SENS_PIN_FL, INPUT_ANALOG);
+  pinMode(SENS_PIN_FR, INPUT_ANALOG);
+  pinMode(SENS_PIN_BR, INPUT_ANALOG);
+  pinMode(SENS_PIN_BL, INPUT_ANALOG);
 
 }
 
@@ -88,6 +95,7 @@ void setup() {
 void loop() {
 
   // Nothing to do in the main loop
+  delay(300);
 
 }
 
@@ -197,17 +205,17 @@ void readSensors(void) {
   long current_timestamp = micros();
 
   // Get sensors values
-  sens_val[0] = analogRead(SENS_PIN_FL) / 4096.0;
-  sens_val[1] = analogRead(SENS_PIN_FR) / 4096.0;
-  sens_val[2] = analogRead(SENS_PIN_BL) / 4096.0;
-  sens_val[3] = analogRead(SENS_PIN_FR) / 4096.0;
+  sens_val[0] = analogRead(SENS_PIN_FL);
+  sens_val[1] = analogRead(SENS_PIN_FR);
+  sens_val[2] = analogRead(SENS_PIN_BL);
+  sens_val[3] = analogRead(SENS_PIN_BR);
 
   // Send over USB serial the sensors and timing information
   wait4Bus();
   char text[300];
   long operation_time = micros();
   sprintf(text, "{'DATA': {'Sensors values': {'Front Left': %i, 'Front Right': %i, 'Back Left': %i,  'Back Right': %i}, 'Time Stamp': %i, 'Previous Time Stamp': %i, 'End of Reading Time Stamp': %i}}", 
-          sens_val[0], sens_val[1], sens_val[2], sens_val[3], current_timestamp, sens_timestamp, operation_time);
+          sens_val[0] - sens_foot_zero[0], sens_val[1] - sens_foot_zero[1], sens_val[2] - sens_foot_zero[2], sens_val[3] - sens_foot_zero[3], current_timestamp, sens_timestamp, operation_time);
   SerialUSB.println(text);
   freeBus();
   sens_timestamp = current_timestamp;
@@ -216,10 +224,10 @@ void readSensors(void) {
 void resetSensors(void) {
 
   // Get sensors values and setup as new zeros
-  sens_foot_zero[0] = analogRead(SENS_PIN_FL) / 4096.0;
-  sens_foot_zero[1] = analogRead(SENS_PIN_FR) / 4096.0;
-  sens_foot_zero[2] = analogRead(SENS_PIN_BL) / 4096.0;
-  sens_foot_zero[3] = analogRead(SENS_PIN_FR) / 4096.0;
+  sens_foot_zero[0] = analogRead(SENS_PIN_FL);
+  sens_foot_zero[1] = analogRead(SENS_PIN_FR);
+  sens_foot_zero[2] = analogRead(SENS_PIN_BL);
+  sens_foot_zero[3] = analogRead(SENS_PIN_BR);
 
 }
 
