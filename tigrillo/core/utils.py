@@ -12,6 +12,7 @@ from mpi4py import MPI as mpi
 import os
 import platform
 from shutil import copyfile
+import subprocess
 import tigrillo
 import time
 import threading
@@ -32,7 +33,7 @@ __date__ = "February 22nd, 2017"
 
 default_logger = False
 default_logger_config_file = os.path.join(tigrillo.__path__[0], '../data/configs/default_log.conf')
-default_logger_folder = os.path.join(tigrillo.__path__[0], '../results/log/')
+default_logger_folder = os.path.join(tigrillo.__path__[0], '/home/gabs48/tigrillo/results/log/')
 
 
 def mkdir(path):
@@ -203,7 +204,7 @@ class LogPipe(threading.Thread):
         and start the thread
         """
         threading.Thread.__init__(self)
-        self.daemon = False
+        self.daemon = True
 
         self.log = logging.getLogger(name)
 
@@ -228,3 +229,22 @@ class LogPipe(threading.Thread):
         """Close the write end of the pipe.
         """
         os.close(self.fdWrite)
+
+
+class BPopen(subprocess.Popen):
+
+    @staticmethod
+    def _proxy_lines(pipe):
+        filename = logging.root.handlers[0].baseFilename
+        with open(filename, "a") as text_file:
+            with pipe:
+                for line in pipe:
+                    text_file.write("THREADED PROCESS: " + line)
+
+    def __init__(self, *args, **kwargs):
+        kwargs['stdout'] = subprocess.PIPE
+        kwargs['stderr'] = subprocess.PIPE
+
+        super(self.__class__, self).__init__(*args, **kwargs)
+        threading.Thread(target=self._proxy_lines, args=[self.stdout]).start()
+        threading.Thread(target=self._proxy_lines, args=[self.stderr]).start()

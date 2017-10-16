@@ -238,7 +238,7 @@ class Tigrillo:
         if self.save_all:
             measure["Run Time"] = t_run
             with open(self.file_s, 'a') as f:
-                w = csv.DictWriter(f, measure.keys())
+                w = csv.DictWriter(f, sorted(measure.keys()))
                 if self.sensors_index == 0:
                     w.writeheader()
                 w.writerow(measure)
@@ -254,7 +254,7 @@ class Tigrillo:
         if self.save_all:
             update["Run Time"] = t_run
             with open(self.file_a, 'a') as f:
-                w = csv.DictWriter(f, update.keys())
+                w = csv.DictWriter(f, sorted(update.keys()))
                 if self.actuators_index == 0:
                     w.writeheader()
                 w.writerow(update)
