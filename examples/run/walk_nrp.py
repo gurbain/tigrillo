@@ -20,8 +20,8 @@ __status__ = "Research"
 __date__ = "September 12th, 2017" 
 
 
-RES_FOLDER = "../results/run/"
-NRP_RES_FOLDER = "../results/nrp/"
+RES_FOLDER = "../../results/run/"
+NRP_RES_FOLDER = "../../results/nrp/"
 
 
 if __name__ == '__main__':
