@@ -40,7 +40,7 @@ if __name__ == '__main__':
                              "'phase_offset': 3.14, 'coupling': [5,5,5,0]}]",
                    "integ_time": 0.001,
                    "timestep": 0.02,
-                   "runtime": 40}}
+                   "runtime": 200}}
     config_walk = {"Controller":
                   {"params": "[{'mu': 1100, 'o': -15, 'omega': 6, 'duty_factor': 0.9, "
                              "'phase_offset': 0, 'coupling': [5,5,5,0]},"
@@ -53,6 +53,18 @@ if __name__ == '__main__':
                        "integ_time": 0.001,
                        "timestep": 0.02,
                        "runtime": 40}}
+    config_walk_nrp = {"Controller":
+                      {"params": "[{'mu': 1247.85, 'o': -1.205, 'omega': 1.7932, 'duty_factor': 0.13, "
+                                 "'phase_offset': 0, 'coupling': [5,5,5,0]},"
+                                 "{'mu': 1271.428, 'o': -1.205, 'omega': 1.7932, 'duty_factor': 0.13, "
+                                 "'phase_offset': 3.43, 'coupling': [5,5,5,0]},"
+                                 "{'mu': 1350.705, 'o': -59.68, 'omega': 1.7932, 'duty_factor': 0.76, "
+                                 "'phase_offset': 3.08, 'coupling': [5,5,5,0]},"
+                                 "{'mu': 1315.937, 'o': -59.68, 'omega': 1.7932, 'duty_factor': 0.76, "
+                                 "'phase_offset': 0.04, 'coupling': [5,5,5,0]}]",
+                       "integ_time": 0.001,
+                       "timestep": 0.02,
+                       "runtime": 20}}
     config = config_run
     ctl = CPG(config)
 
