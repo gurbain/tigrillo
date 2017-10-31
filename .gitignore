@@ -21,5 +21,9 @@ dist/*
 *.directory
 *.idea
 
+# SpiNNaker generated
+tigrillo/other/spiNNaker/application_generated_data_files/*
+tigrillo/other/spiNNaker/reports/*
+
 # Development milestones
 TODO*
