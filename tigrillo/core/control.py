@@ -339,6 +339,37 @@ class CPG(Controller):
         return cmd
 
 
+class AdaptableCPG(CPG):
+
+    def __init__(self, configuration):
+
+        super(AdaptableCPG, self).__init__(configuration)
+
+    @override
+    def step(self, t, sensors):
+
+        self.t = t
+
+        # Modify CPG frequency according to [JAPANESE PAPER] to observe gait transitions
+
+
+        # Update CPG
+        n_steps = (int(self.t/self.dt) - self.prev_t)
+        cmd = []
+        if n_steps == 0:
+            n_steps = 1
+            self.log.error("Controller time step (" + str((self.t - self.prev_t)*1000) +
+                           "ms) is too low for numerical integration (dt = " + str(self.dt*1000) + " ms). " +
+                           "Truncating control signal to avoid stopping software!")
+
+        for _ in range(n_steps):
+            cmd = self.step_cpg()
+
+        self.prev_t = int(self.t/self.dt)
+
+        return cmd
+
+
 if __name__ == '__main__':
 
     # Test Sine evolution

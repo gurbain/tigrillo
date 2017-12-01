@@ -40,10 +40,10 @@ class Sensors:
         self.imu = BNO055.BNO055(rst=int(self.i2c_rst_pin))
 
         if not self.imu.begin():
-            raise RuntimeError('Failed to initialize IMU! Please, check the connection')
+           raise RuntimeError('Failed to initialize IMU! Please, check the connection')
         else:
-            print("Sensors initialized correctly!\n")
-            self.printStatus()
+           print("Sensors initialized correctly!\n")
+           self.printStatus()
 
         return
 
@@ -78,8 +78,9 @@ class Sensors:
 
         line = "F"
         line += str(period)
+        line += "\r\n"
         self.uart.write(line)
-        # CHECKACK
+        # checkack
 
     def resetCalib(self):
         """ Reset the sensor calibration to the current value """
@@ -89,7 +90,7 @@ class Sensors:
         self.imu.set_calibration(data)
 
         # OpenCM
-        line = "R"
+        line = "R\n\r"
         self.uart.write(line)
 
     def getMeasureAll(self):
@@ -138,10 +139,10 @@ class Sensors:
 
 
         measure = {"IMU Time Stamp": imu_timestamp, "IMU IO Time": imu_read_time, "Position Heading": ori_h,
-                   "Position Roll": ori_r, "Position Pitch": ori_p,"Position X": pos_x, "Position Y": pos_y,
-                   "Position Z": pos_z, "Position W": pos_w, "Gyroscope X": gyro_x, "Gyroscope Y": gyro_y,
-                   "Gyroscope Z": gyro_z, "Linear Acceleration X": linacc_x, "Linear Acceleration Y": linacc_y,
-                   "Linear Acceleration Z": linacc_z, "Gravity Y": grav_y, "Gravity Z": grav_z}
+                    "Position Roll": ori_r, "Position Pitch": ori_p,"Position X": pos_x, "Position Y": pos_y,
+                    "Position Z": pos_z, "Position W": pos_w, "Gyroscope X": gyro_x, "Gyroscope Y": gyro_y,
+                    "Gyroscope Z": gyro_z, "Linear Acceleration X": linacc_x, "Linear Acceleration Y": linacc_y,
+                    "Linear Acceleration Z": linacc_z, "Gravity Y": grav_y, "Gravity Z": grav_z}
 
         # OpenCM
         opencm_measure = self.uart.read_data()
@@ -179,7 +180,7 @@ class Actuators:
         line += str(int(update["FL"])) + ','
         line += str(int(update["FR"])) + ','
         line += str(int(update["BL"])) + ','
-        line += str(int(update["BR"]))
+        line += str(int(update["BR"])) + '\r\n'
         self.uart.write(line)
 
 
@@ -188,7 +189,7 @@ class Tigrillo:
     This class can be called to read the sensors in a formatted representation
     """
 
-    def __init__(self, uart_port="/dev/ttyACM0", uart_baud=9600, i2c_rst_pin="5", save_all=True, data_folder=None):
+    def __init__(self, uart_port="/dev/ttyS0", uart_baud=115200, i2c_rst_pin="18", save_all=True, data_folder=None):
 
         self.uart_baud = uart_baud
         self.uart_port = uart_port
@@ -265,5 +266,4 @@ class Tigrillo:
     def set_sensor_period(self, period=0.01):
         """ Set the period to which the OpenCM board is reading all sensors (in s) """
 
-        print period * 1000000
         self.sensors.changeUARTPeriod(period * 1000000)

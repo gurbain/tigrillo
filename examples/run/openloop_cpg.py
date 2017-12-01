@@ -65,7 +65,7 @@ if __name__ == '__main__':
                        "integ_time": 0.001,
                        "timestep": 0.02,
                        "runtime": 20}}
-    config = config_run
+    config = config_walk
     ctl = CPG(config)
 
     # Create a Timer to ensure that simulation time goes at real-time

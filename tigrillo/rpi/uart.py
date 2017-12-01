@@ -52,6 +52,7 @@ class UARTDaemon(threading.Thread):
 
         self.conn = serial.Serial(self.port, self.baud)
         if not self.conn.isOpen():
+
             self.conn.open()
         self.stop = False
 
@@ -85,7 +86,6 @@ class UARTDaemon(threading.Thread):
         """ Add a ack line in the uart buffer """
 
         self.ack_buffer.append(ack)
-        print "haha" + str(ack)
         if len(self.ack_buffer) > MAX_BUFFER_SIZE:
             self.ack_buffer.popleft()
 
@@ -120,8 +120,6 @@ class UARTDaemon(threading.Thread):
 
             if "DATA" in dico:
                 self._add_data(dico["DATA"])
-                print("Received correct DATA UART packet!")
             if "ACK" in dico:
                 self._add_ack(dico["ACK"])
-                print("Received correct ACK UART packet!")
             time.sleep(self.read_period)

@@ -19,7 +19,7 @@ __date__ = "September 19th, 2017"
 
 class Timer(object):
 
-    def __init__(self, real_time=True, runtime=10, dt=0.01):
+    def __init__(self, real_time=True, runtime=10, dt=0.01, print_dt=0.5):
 
         self.real_time = real_time
         self.sdt = dt
@@ -34,6 +34,9 @@ class Timer(object):
 
         self.it = 0
         self.n_it = int(self.st_end / self.sdt)
+
+        self.print_dt = print_dt
+        self.time_since_print = 0
 
     def start(self):
         """ Start the real-time clock """
@@ -54,6 +57,13 @@ class Timer(object):
         new_st = self.st + self.sdt
         self.rdt = new_rt - self.rt
 
+        # Print info with a given frequency
+        if self.time_since_print < self.print_dt:
+            self.time_since_print += self.sdt
+        else:
+            self.time_since_print = 0
+            self.print_info()
+
         # If the real time is too slow for the simulation time
         if (new_rt - self.rt_init).total_seconds() > (new_st - self.st_init):
             print('Warning: the real time step (' + str(self.rdt)
@@ -68,6 +78,7 @@ class Timer(object):
             self.rt = self.rt + datetime.timedelta(seconds=self.sdt)
             pause.until(self.rt)
 
+        # If by chance they correspond
         else:
             self.st = new_st
             self.rt = new_rt
@@ -78,8 +89,8 @@ class Timer(object):
         """ Print info over timing and iterations number """
 
         print("Epoch: " + str(self.it) + "/" + str(self.n_it) +
+              ";\tSimulated time: " + "%.2f" % self.st + "/" +  "%.2f" % self.st_end +
               ";\tReal time: " + str(self.rt.strftime("%S.%f")[:-2]) + "/" + str(self.rt_end.strftime("%S.%f")[:-2]) +
-              ";\tSimulated time: " + str(self.st) + "/" + str(self.st_end) +
               ";  \tSim dt: " + str(self.sdt) + ";\tReal dt: " + str(self.rdt.total_seconds()))
 
     def is_finished(self):

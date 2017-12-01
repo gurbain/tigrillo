@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # Create and configure robot (by defaut: save actuators and sensors values)
     rob = robot.Tigrillo(data_folder=RESULTS_FOLDER)
     rob.start()
-    rob.set_sensor_period(2)
+    rob.set_sensor_period(0.02)
 
     # Create stand-up values (offset of 115 degrees)
     pose = {"FL": 80, "FR": 80, "BL": 60, "BR": 60}
