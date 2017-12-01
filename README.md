@@ -4,7 +4,16 @@ A library to simulate and pilot the Tigrillo quadruped robot
 
 ## Requirements
 
-TBD!
+ROS
+mpi4py
+Known issues:
+
+NRP installed => need to install mpi4py manually using the mpi version from the NRP
+- remove other mpi4py versions
+- clone rep
+- change config
+- build
+- install
 
 ## Installation
 
@@ -29,7 +38,12 @@ cd tigrillo && cat installed_files.txt | sudo xargs rm -rf
 
 Using Bullet Simulator: TBD!
 Using Gazebo: TBD!
+Install the models
 Using Mujoco: TBD!
+
+Known issues:
+Adapt the configuration files:
+find . -type f -print0 | xargs -0 sed -i 's/gabs48/gurbain/g'
 
 ### Run on real platform
 
@@ -51,3 +65,12 @@ To run the code on the robotic platform:
 ### Create a custom tigrillo robot model
 
 TBD!
+
+
+## TO ADD to installation RPI
+- sudo apt-get install libfreetype6-dev libpng12-dev libcr-dev mpich mpich-doc libopenmpi-dev liblapack-dev libblas-dev
+- Rmq: had to install mpi4py with pip
+- Attention develop
+- correct OpenCM install
+- adafruit install: https://github.com/adafruit/Adafruit_Python_GPIO
+

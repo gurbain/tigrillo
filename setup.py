@@ -24,6 +24,7 @@ setup(name='tigrillo',
             'psutil>=3.3.0',
             'pybullet>=1.0.7',
             "PyYaml",
+            "configparser",
       ],
       extras_require={
             'pyserial': ['scipy>=3.0.1'],
