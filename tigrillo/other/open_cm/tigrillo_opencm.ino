@@ -12,6 +12,8 @@
 /* -------- Global Variables and Preprocessor Commands -------- */
 
 // Includes
+#include "tigrillo_opencm.h"
+
 #include <errno.h>
 #include <string.h>
 #include <stdio.h>
@@ -79,8 +81,8 @@ void setup() {
   Timer.resume();
 
   // Setup Interuption for received UART message
-  SerialUSB.begin();
-  SerialUSB.attachInterrupt(readUART);
+  Serial2.begin(BAUDRATE_115200);
+  Serial2.attachInterrupt(store_rx);
   
   // Init sensor PINs
     // Configure the ADC pin
@@ -117,13 +119,13 @@ void readUART(byte* buffer, byte size) {
         if (res != 0) {
           wait4Bus();
           if  (res == -1)
-            SerialUSB.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Too few numbers in argument list!'}}");
+            Serial2.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Too few numbers in argument list!'}}");
           else if (res == -2)
-            SerialUSB.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Too many numbers in argument list!'}}");
+            Serial2.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Too many numbers in argument list!'}}");
           else if (res == -3)
-            SerialUSB.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Wrong character in argument list!'}}");
+            Serial2.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Wrong character in argument list!'}}");
           else if (res == -4)
-            SerialUSB.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Unknown!'}}");
+            Serial2.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Unknown!'}}");
           freeBus();
           break; 
         }
@@ -131,12 +133,12 @@ void readUART(byte* buffer, byte size) {
         wait4Bus();
         char text[120];
         sprintf(text, "{'ACK': {'Instruction': 'A', 'Data': 'Success: %i %i %i %i !'}}", act_leg[0], act_leg[1], act_leg[2], act_leg[3]);
-        SerialUSB.println(text);
+        Serial2.println(text);
         freeBus();
       } 
       else {
         wait4Bus();
-        SerialUSB.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Too few arguments!'}}");
+        Serial2.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Too few arguments!'}}");
         freeBus();
       }
       break;
@@ -144,7 +146,7 @@ void readUART(byte* buffer, byte size) {
     case 'R':
       resetSensors();
       wait4Bus();
-      SerialUSB.println("{'ACK': {'Instruction': 'R', 'Data': 'Success!'}}");
+      Serial2.println("{'ACK': {'Instruction': 'R', 'Data': 'Success!'}}");
       freeBus();
       break;
       
@@ -155,13 +157,13 @@ void readUART(byte* buffer, byte size) {
         if (res1 != 0) {
           wait4Bus();
           if  (res1 == -1)
-            SerialUSB.println("{'ACK': {'Instruction': 'F', 'Data': 'Error: Too few numbers in argument list!'}}");
+            Serial2.println("{'ACK': {'Instruction': 'F', 'Data': 'Error: Too few numbers in argument list!'}}");
           else if (res1 == -2)
-            SerialUSB.println("{'ACK': {'Instruction': 'F', 'Data': 'Error: Too many numbers in argument list!'}}");
+            Serial2.println("{'ACK': {'Instruction': 'F', 'Data': 'Error: Too many numbers in argument list!'}}");
           else if (res1 == -3)
-            SerialUSB.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Wrong character in argument list!'}}");
+            Serial2.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Wrong character in argument list!'}}");
           else if (res1 == -4)
-            SerialUSB.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Unknown!'}}");
+            Serial2.println("{'ACK': {'Instruction': 'A', 'Data': 'Error: Unknown!'}}");
           freeBus();
           break; 
         }
@@ -170,25 +172,25 @@ void readUART(byte* buffer, byte size) {
         if (res2 == 0) {
           char text[120];
           sprintf(text, "{'ACK': {'Instruction': 'F', 'Data': 'Success: Sensor reading period changed to %i microseconds!'}}", period[0]);
-          SerialUSB.println(text);
+          Serial2.println(text);
         }
         else {
           char text[120];
           sprintf(text, "{'ACK': {'Instruction': 'F', 'Data': 'Error: Period is too short. Please, use higher than %i microseconds!'}}", MIN_SENS_READ_TIME);
-          SerialUSB.println(text);
+          Serial2.println(text);
         }
         freeBus();
       }
       else {
         wait4Bus();
-        SerialUSB.println("{'ACK': {'Instruction': 'F', 'Data': 'Error: Too few arguments!'}}");
+        Serial2.println("{'ACK': {'Instruction': 'F', 'Data': 'Error: Too few arguments!'}}");
         freeBus();
       }
       break;
       
     default:
       wait4Bus();
-      SerialUSB.println("{'ACK': {'Instruction': 'D', 'Data': 'Error: Instruction not recognised!'}}");
+      Serial2.println("{'ACK': {'Instruction': 'D', 'Data': 'Error: Instruction not recognised!'}}");
       freeBus();
       break;
   }
@@ -202,6 +204,7 @@ void readUART(byte* buffer, byte size) {
 void readSensors(void) {
 
   // Get time and check with previous timestamp
+  Serial2.println("hello world!");
   long current_timestamp = micros();
 
   // Get sensors values
@@ -216,10 +219,11 @@ void readSensors(void) {
   long operation_time = micros();
   sprintf(text, "{'DATA': {'Sensors values': {'Front Left': %i, 'Front Right': %i, 'Back Left': %i,  'Back Right': %i}, 'Time Stamp': %i, 'Previous Time Stamp': %i, 'End of Reading Time Stamp': %i}}", 
           sens_val[0] - sens_foot_zero[0], sens_val[1] - sens_foot_zero[1], sens_val[2] - sens_foot_zero[2], sens_val[3] - sens_foot_zero[3], current_timestamp, sens_timestamp, operation_time);
-  SerialUSB.println(text);
+  Serial2.println(text);
   freeBus();
   sens_timestamp = current_timestamp;
 }
+
 
 void resetSensors(void) {
 
@@ -250,10 +254,9 @@ void updateMotors(int act_leg[]) {
 }
 
 
-
 int changePeriod(int period) {
 
-   // Pause timer and change timer frequency
+  // Pause timer and change timer frequency
   if (period > MIN_SENS_READ_TIME) {  
     sens_period = period;
     Timer.pause();
@@ -273,27 +276,31 @@ int changePeriod(int period) {
 void printTab(int* tab, int size) {
    
   // Only for debugging purpose
-  SerialUSB.print("[ ");
+  Serial2.print("[ ");
   for (int i = 0; i < size; i++) {
-    SerialUSB.print(tab[i]);
-    SerialUSB.print(" ");
+    Serial2.print(tab[i]);
+    Serial2.print(" ");
   }
-  SerialUSB.println("]");
+  Serial2.println("]");
   
 }
 
 
 void initTab(int* tab, int size) {
+
   for (int i = 0; i < size; i++) {
     tab[i] = 0;
   }
+
 }
 
 
 void emptyStr(char* tab, int size) {
+
   for (int i = 0; i < size; i++) {
     tab[i] = '\0';
   }
+
 }
 
 
@@ -327,16 +334,21 @@ int str2i(char* str, int* tab, int size) {
   } else {
     return 0;
   }
+
 }
 
 
 void wait4Bus(void) {
+
    while (bus_mutex == 1) {
      delay_us(100);
-   } 
+   }
+
 }
 
 
 void freeBus(void) {
+
   bus_mutex = 0;
+
 }
